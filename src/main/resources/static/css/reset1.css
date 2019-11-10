@@ -1,0 +1,53 @@
+*{
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+html,body{
+	height: 100%;
+}
+body{
+	font-family: "Î¢ÈíÑÅºÚ";
+}
+a{
+	text-decoration: none;
+}
+.f-l{
+	float: left;
+}
+.f-r{
+	float: right;
+}
+@keyframes myimg1{
+	0%{left:0;top: 0;}
+	50%{left:90%;top: 90%;}
+	100%{left:0;top: 0;}
+}
+.img1{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	animation: myimg1 120s infinite;
+}
+@keyframes myimg2{
+	0%{left:10px;top: 100px;}
+	50%{left:50%;top: 10%;}
+	100%{left:200px;top: 300px;}
+}
+.img2{
+	position: absolute;
+	top: 500px;
+	left: 800px;
+	animation: myimg2 200s infinite;
+}
+@keyframes myimg3{
+	0%{left:800px;top: 100px;}
+	50%{left:20%;top: 50%;}
+	100%{left:400px;top: 500px;}
+}
+.img3{
+	position: absolute;
+	top: 200px;
+	left: 500px;
+	animation: myimg3 200s infinite;
+}

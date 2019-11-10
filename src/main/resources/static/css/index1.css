@@ -1,0 +1,60 @@
+body{
+	    background: rgb(243, 243, 243);
+}
+.header{
+	height: 30px;
+	line-height: 30px;
+	background: #333;
+	color: white;
+}
+.header a{
+	color: white;
+}
+.wrap{
+	width: 90%;
+	margin: 0 auto;
+}
+.info h1{
+	font-weight: 500;
+}
+.info p{
+	margin-top: 10px;
+}
+.btn{
+	display: inline-block;
+	background: blue;
+	color: white;
+	padding: 1px 20px 2px;
+	margin-top: 10px;
+	border-radius: 4px;
+}
+.box{
+	height: 10px;
+	margin: 30px 0px;
+	background: linear-gradient(to top,white,#999);
+}
+.list{
+	width: 90%;
+	margin: 0 auto;
+	background: aquamarine;
+	list-style: none;
+}
+.list li{
+	float: left;
+	width: 24%;
+	padding: 30px 10px;
+	margin-bottom: 20px;
+	margin-right: 1%;
+	border: solid 1px #ccc;
+	position: relative;
+	top: 0px;
+	transition: all ease 0.5s;
+	border-radius: 4px;
+}
+.list li:hover{
+	box-shadow: 0px 0px 2px 2px #ccc;
+	top: -4px;
+}
+h3{
+	font-weight: 500;
+}

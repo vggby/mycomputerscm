@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head  th:replace="fragments/basic::footer1">
+    <title>工作空间</title>
+
+    <link rel="stylesheet" th:href="@{style/css/skins/_all-skins.min.css}">
+  </head>
+
+
+<body class="sidebar-mini skin-red-light" style="height: auto; min-height: 100%;">
+
+<header  th:replace="fragments/top::top"></header>
+
+
+  <!-- 头部 -->
+<!--  <jsp:include page="/WEB-INF/jsp/common/top.jsp"></jsp:include>-->
+
+  <!-- 左边 -->
+  <!--  <div  th:replace="fragments/left::footer2" class="wrapper" style="height: auto; min-height: 100%;">-->
+<aside th:replace="fragments/left::left"></aside>
+   <!-- 内容区域  style="min-height: 500px; background: url('${pageContext.request.contextPath}/static/style/img/denglu.jpg') no-repeat;background-size:100%;"-->
+  
+  <div class="content-wrapper" style="min-height: 800px;">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+     	   这是您第次登录password BOX
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> 首页</a></li>
+        <li><a href="#">后台中心</a></li>
+        <li class="active">管理员</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+
+      <!-- Default box -->
+      <div class="box">
+        <div class="box-header with-border">
+         <!--<p>您上次登录的时间是：<fmt:formatDate value="${users.personLoginTime}" pattern="yyyy年MM月dd日 HH:mm:ss"/> </p>	-->
+        </div>
+        <div class="box-body">
+       		  以下是您的账户和密码，请您在安全的环境下登录
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer">
+                           如果发现密码泄露请及时更换密码，超级密码箱为你保存所有账户和密码。
+        </div>
+        <!-- /.box-footer-->
+        <!--<a class="btn" href="${pageContext.request.contextPath}/user/login">安全退出系统</a>-->
+      </div>
+      <!-- /.box -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  
+   <!-- 底部 -->
+<!--   <jsp:include page="/WEB-INF/jsp/common/bottom.jsp"></jsp:include>-->
+   
+   <!-- 设置 -->
+<!--   <jsp:include page="/WEB-INF/jsp/common/setting.jsp"></jsp:include>-->
+  </div>
+
+
+    <!-- SlimScroll -->
+    <script th:src="@{../plugin/jquery-slimscroll/jquery.slimscroll.min.js}"></script>
+    <!-- FastClick -->
+    <script th:src="@{../plugin/fastclick/fastclick.js}"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script th:src="@{../style/js/demo.js}"></script>
+    <script>
+      $(function(){
+        $('.sidebar-menu').tree()
+      });
+    </script>
+  </body>
+</html>
