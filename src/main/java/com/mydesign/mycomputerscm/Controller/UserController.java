@@ -45,7 +45,7 @@ public class UserController {
             session.setAttribute("user", user);
         } else {
             resultInfo.setFlag(false);
-            resultInfo.setErrorMsg("登录失败");
+            resultInfo.setErrorMsg("登录失败了");
         }
         return resultInfo;
     }
