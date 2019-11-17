@@ -1,8 +1,9 @@
 package com.mydesign.mycomputerscm.Service;
 
-import com.mydesign.mycomputerscm.domain.User;
+import com.mydesign.mycomputerscm.domain.SysUser;
 
 public interface UserService {
-    User UserLogin(User user);
-    int SaveUser(User user);
+   /* User UserLogin(User user);*/
+    SysUser SaveUser(SysUser user);
+    SysUser findbyUsername(String username);
 }

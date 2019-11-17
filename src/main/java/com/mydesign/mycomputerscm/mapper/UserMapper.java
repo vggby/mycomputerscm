@@ -1,9 +1,15 @@
 package com.mydesign.mycomputerscm.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.mydesign.mycomputerscm.domain.User;
 
-public interface UserMapper  extends BaseMapper<User> {
+import com.mydesign.mycomputerscm.domain.SysUser;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface UserMapper  extends JpaRepository<SysUser,String> {
 
 
+
+
+    SysUser findByUsername(String username);
 }
