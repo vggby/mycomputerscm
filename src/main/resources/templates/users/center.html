@@ -78,5 +78,48 @@
         $('.sidebar-menu').tree()
       });
     </script>
+<script>
+  $(document).ready(function () {
+
+    function getRootmenu() {
+      $.ajax({
+        type: "get",
+        dataType: "json",
+        url: "/getMenu",
+        success: function (data) {
+
+          var m = "";
+          if (data.length > 0) {
+            for (j = 0; j < data.length; j++) {
+              if (data[j].parentId =='root') {
+
+                if (data[j].type == 1) {
+                  m = m + "<li class='treeview'><a href='#'><i class='fa fa-dashboard'></i> <span>"+data[j].menuName+"<span class='pull-right-container'><i class='fa fa-angle-left pull-right'></i></span></a>";
+
+                if (data[j].subMenuList.length>0){
+                  m=m+'<ul class="treeview-menu">';
+                  for (i = 0; i < data[j].subMenuList.length; i++) {
+                    m=m+'<li><a href="#"><i class="fa fa-circle-o"></i>'+data[j].subMenuList[i].menuName+'</a></li>';
+                  }
+                  m=m+'</ul>';
+                }
+
+                  m=m+'</li>';
+
+
+
+                }
+              }
+            }
+          }
+
+          $('#ulmenu').html(m);
+
+        }
+      });
+    }
+    getRootmenu();
+  });
+</script>
   </body>
 </html>
