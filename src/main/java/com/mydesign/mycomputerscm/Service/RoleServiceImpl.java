@@ -39,14 +39,14 @@ public class RoleServiceImpl implements RoleService{
                 .build();
 
         Sort sort = Sorts.builder()
-                .desc( "".equals(role_name) , "roleName")
+
                 .build();
         int  page = 0;
-        int limit = 3;
+        int limit = 5 ;
         if (queryrole.getOffset()!=null &&queryrole.getOffset()!=0){
             page=queryrole.getOffset()-1;
         }
-        if (queryrole.getLimit()!=null&&queryrole.getLimit()!=0){
+        if (queryrole.getLimit()!=null&& queryrole.getLimit()!=0){
             limit=queryrole.getLimit();
         }
         return  RoleManaRoleMapper.findAll(specification, PageRequest.of(page, limit, sort));
