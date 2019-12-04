@@ -22,18 +22,18 @@ public class MenuController {
     @ResponseBody
     public  List<Menu> getMenu(){
         Menu rootMenu = new Menu();
-        rootMenu.setMenuId("root");
-        rootMenu.setMenuName("系统");
+
+
         Role role = new Role();
 
-        role.setRoleId("1");
+        role.setRoleid("1");
 
         List<Role>rolelist  = new ArrayList<>();
         rolelist.add(role);
 
 
         queryMenu queryMeny = new queryMenu();
-        queryMeny.setMenuid("1");
+
         List<Menu> menuTree = menuService.getMenuTree(queryMeny, rolelist);
 
         return menuTree;

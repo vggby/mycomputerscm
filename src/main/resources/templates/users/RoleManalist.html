@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head  th:replace="fragments/basic::footer1">
+    <title>工作空间</title>
+
+    <link rel="stylesheet" th:href="@{style/css/skins/_all-skins.min.css}">
+    <link rel="stylesheet" th:href="@{plugin/table/bootstrap-table.css}">
+    <link rel="stylesheet" th:href="@{css/Icons.css}" />
+      <script type="text/javascript" th:src="@{js/jquery.min.js}"></script>
+
+  </head>
+
+  <body class="sidebar-mini skin-red-light" style="height: auto; min-height: 100%;">
+  <div class="wrapper" style="height: auto; min-height: 100%;">
+  
+  <!-- 头部 -->
+      <header  th:replace="fragments/top::top"></header>
+  
+  
+  <!-- 左边 -->
+      <aside th:replace="fragments/left::left"></aside>
+ 
+ 
+   <!-- 内容区域 -->
+  <div class="content-wrapper" style="min-height: 1126px;">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+                 用户权限管理
+        <small></small>
+      </h1>
+     <!-- <ol class="breadcrumb">
+
+         <button type="submit" class="btn btn-success btn-flat">锁屏</button>
+      </ol>-->
+    </section>
+
+
+    <!-- Main content -->
+    <section class="content">
+       
+      <!-- 添加搜索条件 -->
+              <div class="box-body">
+                <div class="row">
+                  <form id="searchForm" action="" onsubmit="return false;">
+                    <div class="col-xs-2">
+                     <!--  <select class="form-control" name="key" id="query_key">
+
+                         <option value="passInfo">密码信息</option>   
+                         <option value="passName">帐号</option>
+                       </select>-->
+                        <label><input name="status" type="checkbox" value=1 />已启动 </label>
+                        <label><input name="status" type="checkbox" value=2 />已停用 </label>
+                        <label><input name="status" type="checkbox" value=3 />已删除 </label>
+                    </div>
+                    <div class="col-xs-2">
+                      <input type="text" id="query_value" name="role_name" class="form-control" placeholder="关键字">
+                    </div>
+                    <div class="col-xs-2">
+                       <button type="submit" class="btn bg-olive btn-flat">查询</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+    
+      <!-- 操作按钮 -->
+      <div id="toolbar">
+
+          <button type="button" data-ope="edit" id ="update"  class="btn bg-olive btn-flatt">编辑</button>
+      <!--    <a href="#" type="button"  data-ope="delete" id ="delete" class="btn bg-olive btn-flatt">删除</a>-->
+          <button type="button" data-ope="delete" class="btn bg-orange btn-flat">删除</button>
+     <!--  <button type="button" data-ope="edit" id ="update"  class="btn bg-olive btn-flatt">编辑</button>
+       &lt;!&ndash;  <a href="#" type="button" id ="update" class="btn bg-olive btn-flatt">修改</a> &ndash;&gt;
+        <button type="button" data-ope="delete" class="btn bg-orange btn-flat">删除</button>-->
+        
+      </div>
+      
+      <table id="user_table"></table>
+    </section>
+    
+    
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  
+   <!-- 底部 -->
+<!--   <jsp:include page="/WEB-INF/jsp/common/bottom.jsp"></jsp:include>
+   
+   &lt;!&ndash; 设置 &ndash;&gt;
+   <jsp:include page="/WEB-INF/jsp/common/setting.jsp"></jsp:include>-->
+  </div>
+
+  <!-- /.悬浮 -->
+  
+
+  
+  
+    <!-- SlimScroll -->
+    <script th:src="@{plugin/jquery-slimscroll/jquery.slimscroll.min.js}"></script>
+    <!-- FastClick -->
+    <script th:src="@{plugin/fastclick/fastclick.js}"></script>
+    
+    <!-- 引用表格插件 -->
+    <script th:src="@{plugin/table/bootstrap-table.js}"></script>
+    <script th:src="@{plugin/table/bootstrap-table-zh-CN.js}"></script>
+     
+    <script>
+      $(function(){
+        
+          var queryUrl = '/queryrolelist';
+    	  $table = $('#user_table').bootstrapTable({
+    	    url: queryUrl,                      //请求后台的URL（*）
+            method: 'post',                      //请求方式（*）
+            toolbar: '#toolbar',                //工具按钮用哪个容器
+            striped: true,                      //是否显示行间隔色
+            cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+            pagination: true,                   //是否显示分页（*）
+            sortable: true,                     //是否启用排序
+            sortOrder: "asc",                   //排序方式
+              dataType: "json", // 服务器返回的数据类型
+            sidePagination: "server",           //分页方式：client客户端分页，server服务端分页（*）
+
+            pageNumber: 1,                      //初始化加载第一页，默认第一页,并记录
+            pageSize: 3,                       //每页的记录行数（*）
+            pageList: [10, 20, 30, 100],        //可供选择的每页的行数（*）
+
+            clickToSelect: true,                //是否启用点击选中行
+            uniqueId: "roleid",                     //每一行的唯一标识，一般为主键列
+            
+            //得到查询的参数
+        /*    queryParams : function (params) {
+            	//修改原来提交的参数名
+
+                 var temp = {
+                     pageNumber: params.totalPages,
+                     pageSize:params.size
+                 };
+
+               return temp;
+            },*/
+            
+            columns: [{
+                checkbox: true,
+                visible: true                  //是否显示复选框
+            },{
+                field: 'roleid',
+                title: 'roleid'
+            },{
+                field: 'roleName',
+                title: 'roleName'
+            },{
+                field: 'remark',
+                title: 'remark'
+            },{
+                field: 'status',
+                title: 'status',
+              /*  formatter:priceForm*/
+
+            }],
+            responseHandler: function(res) {
+                return {
+                    "total":res.totalPages+1,//总页数
+                    "rows": res.content   //数据
+                 };
+            }
+        });
+    	  function priceForm(value,row,index){
+              return ['<div style="width: 300px;"><input readonly="readonly" data-attr="show-password" id="1plan'+row.roleid+'"  class="form-control"  data='+value+' value='+value+'  onblur="Target('+row.roleid+',1)"  onfocus="addTarget('+row.roleid+',1)"></div>'].join("")
+          }
+        
+        //监听删除\编辑按钮
+    	  $("#toolbar > button").click(function(){
+    		//获取总的记录数  
+      		var idArray = $table.bootstrapTable('getAllSelections');
+      		if(idArray.length <1){
+      			alert("必须选中一条记录");
+      			return;
+      		}
+      		var ope = $(this).data("ope");
+      		if("delete"==ope){
+      			var ids=new Array();
+          			for(var index in idArray) {  
+          		       	var id = idArray[index].roleid;
+          		      	ids[index]= id;
+          			}
+          			
+      			 $.ajax({
+      	            url: "/deleterole",
+      	           traditional:true,
+      	            data: {
+                        roleid: ids
+      	            },
+      	            async: true,   //是否为异步请求
+      	            cache: false,  //是否缓存结果
+      	            type: "POST",
+      	            dataType: "json",   //服务器返回的数据是什么类型 
+      	            success: function(data){ 
+      	            	if(data.flag){
+    						//成功,给errorMsg添加提示信息
+    					    alert(data.errorMsg);
+                            window.location.href="/queryrolelist";
+                        }else{
+    					    //失败,给errorMsg添加提示信息
+    					    alert(data.errorMsg);
+    					}
+      	            }
+      	          });
+      			/* $.ajax({
+      				type:"get",
+      				url : "${pageContext.request.contextPath}/boxs/delete/"+id,
+      				success:function(data){
+      				
+      					if(data.flag){
+    						//成功,给errorMsg添加提示信息
+    					    alert(data.errorMsg);
+    						window.location.href="${pageContext.request.contextPath }/boxs/listUI"; 
+    						
+    					}else{
+    					    //失败,给errorMsg添加提示信息
+    					    alert(data.errorMsg);
+    					}
+    						
+      				}
+      			}); */
+      			
+      			
+      		}else if("edit"==ope){
+      		//获取主键
+      			var roleid = idArray[0].roleid;
+                window.location.href="/editrole/"+roleid;
+      		}
+      	});
+      });
+      
+      //定义serializeObject方法，序列化表单
+  	$.fn.serializeObject = function() {
+  		var o = {};
+  		var a = this.serializeArray();
+  		$.each(a, function() {
+  			if (o[this.name]) {
+  				if (!o[this.name].push) {
+  					o[this.name] = [ o[this.name] ];
+  				}
+  				o[this.name].push(this.value || '');
+  			} else {
+  				o[this.name] = this.value || '';
+  			}
+  		});
+  		return o;
+  	};
+
+      
+      
+      $(function(){
+    	//复制如下代码即可
+
+    	        $("#searchForm").on("submit",function(){
+    	        	var param = $(this).serializeObject();  
+    	        	if(param.key && param.value){
+    	    			var key = param.key;
+    	    			var value = param.value;
+    	    		    delete param['key'];
+    	    		    delete param['value'];
+    	    			param[key] = value;
+    	    		}
+    	    		$table.bootstrapTable('refresh',{query:param});
+    	        	return false;
+    	        });
+
+    	});
+    	
+    </script>
+    
+    
+<!--    <script>
+    function addTarget(id,type){
+
+    	 $("#1plan"+id).attr("type","text");
+
+    };
+    
+    function Target(id,type){
+        
+   	 $("#1plan"+id).attr("type","password");
+    
+   };
+
+    </script>-->
+
+       
+  <script type="text/javascript">
+	  $(function () {
+	      //当表单提交时，调用所有的校验方法
+			$("#productGroup").submit(function(){
+				
+				//1.发送数据到服务器
+				$.post("${pageContext.request.contextPath }/boxs/save",$(this).serialize(),function(data){
+					if(data.flag){
+						//成功,给errorMsg添加提示信息
+					    alert(data.errorMsg);
+						window.location.href="${pageContext.request.contextPath }/boxs/listUI"; 
+						
+					}else{
+					    //失败,给errorMsg添加提示信息
+					    alert(data.errorMsg);
+						
+					}
+				});
+			});
+	      
+	      
+	      
+
+			
+		});
+	  
+  </script>
+  </body>
+</html>

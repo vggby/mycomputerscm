@@ -4,6 +4,7 @@
 <aside class="main-sidebar" th:fragment="left">
   <!-- sidebar: style can be found in sidebar.less -->
   <section class="sidebar" style="height: auto;" id="left">
+
     <!-- Sidebar user panel -->
     <div class="user-panel">
       <div class="pull-left image">
@@ -78,6 +79,44 @@
       <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> <span>Warning</span></a></li>
       <li><a href="#"><i class="fa fa-circle-o text-aqua"></i> <span>Information</span></a></li>
     </ul>
+
+    <script>
+      $(document).ready(function () {
+
+        function getRootmenu() {
+          $.ajax({
+            type: "get",
+            dataType: "json",
+            url: "/getMenu",
+            success: function (data) {
+
+              var m = "";
+              if (data.length > 0) {
+                for (j = 0; j < data.length; j++) {
+                  if (data[j].parentId =='root') {
+                    m = m + "<li class='treeview'><a href='#'><i class='fa fa-dashboard'></i> <span>"+data[j].menuName+"<span class='pull-right-container'><i class='fa fa-angle-left pull-right'></i></span></a>";
+                    if (data[j].subMenuList.length>0){
+                      m=m+'<ul class="treeview-menu">';
+                      for (i = 0; i < data[j].subMenuList.length; i++) {
+                        m=m+'<li><a href="#"><i class="fa fa-circle-o"></i>'+data[j].subMenuList[i].menuName+'</a></li>';
+                      }
+                      m=m+'</ul>';
+                    }
+
+                  }
+                }
+              }
+              m=m+'</li>';
+
+              $('#ulmenu').html(m);
+
+            }
+          });
+        }
+        getRootmenu();
+      });
+    </script>
+
   </section>
   <!-- /.sidebar -->
 </aside>

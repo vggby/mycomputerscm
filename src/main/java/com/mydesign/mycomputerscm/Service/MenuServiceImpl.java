@@ -31,7 +31,7 @@ public class MenuServiceImpl implements MenuService{
                 if(roleList!=null && roleList.size()>0){
                     for (Role role:
                          roleList) {
-                        predicates.add(criteriaBuilder.equal(roleMenuRoot.get("roleId"), role.getRoleId()));
+                        predicates.add(criteriaBuilder.equal(roleMenuRoot.get("roleId"), role.getRoleid()));
                     }
                 }
                 Predicate or = criteriaBuilder.or(predicates.toArray(new Predicate[]{}));
