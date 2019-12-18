@@ -12,7 +12,7 @@
       </div>
       <div class="pull-left info">
         <!--<p>${users.personUserName}</p>-->
-        <a href="#"><i class="fa fa-circle text-success"></i> 欢迎您</a>
+        <a href="#"><i class="fa fa-circle text-success">[[${user.username}]]</i> 欢迎您</a>
       </div>
     </div>
     <!-- search form -->
@@ -25,7 +25,7 @@
     <ul class="sidebar-menu tree" data-widget="tree" id="ulmenu">
       <li class="treeview">
       <a href="#">
-        <i class="fa fa-dashboard"></i> <span>账号管理</span>
+        <i class="fa fa-dashboard"></i> <span>账号管理1</span>
         <span class="pull-right-container">
             <i class="fa fa-angle-left pull-right"></i>
           </span>
@@ -36,51 +36,30 @@
       </ul>
 
     </li>
-
-      <li class="treeview">
+      <li th:each="menu : ${menus}" class="treeview">
         <a href="#">
-          <i class="fa fa-dashboard"></i> <span>导入导出</span>
+          <i class="fa fa-dashboard"></i> <span th:text="${menu.menuName}">一级菜单</span>
           <span class="pull-right-container">
             <i class="fa fa-angle-left pull-right"></i>
           </span>
         </a>
-        <ul class="treeview-menu">
 
-          <li class="treeview">
-            <a href="#">
-              <i class="fa fa-dashboard"></i> <span>导入导出1</span>
-              <span class="pull-right-container">
-            <i class="fa fa-angle-left pull-right"></i>
-          </span>
-            </a>
-            <ul class="treeview-menu">
-              <li><a href="#"><i class="fa fa-circle-o"></i>导出</a></li>
+            <ul   th:each="cmenu : ${menu.children}" class="treeview-menu">
+              <li>
+                <a  th:if="${#lists.isEmpty(cmenu.children)}" th:href="@{${cmenu.action}}"><i class="fa fa-circle-o"th:utext="${cmenu.menuName}"></i></a>
+                <a th:if="${not #lists.isEmpty(cmenu.children)}" href="#">[[${cmenu.menuName}]]<span class="fa arrow"></span></a>
+              </li>
+
             </ul>
-          </li>
 
-        </ul>
-      </li>
-      <li class="treeview">
-        <a href="#">
-          <i class="fa fa-dashboard"></i> <span>系统设置</span>
-          <span class="pull-right-container">
-            <i class="fa fa-angle-left pull-right"></i>
-          </span>
-        </a>
-        <ul class="treeview-menu">
-          <li><a href="#"><i class="fa fa-circle-o"></i>账号冻结</a></li>
 
-        </ul>
       </li>
 
-      <li></li>
-      <li class="header">LABELS</li>
-      <li><a href="#"><i class="fa fa-circle-o text-red"></i> <span>Important</span></a></li>
-      <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> <span>Warning</span></a></li>
-      <li><a href="#"><i class="fa fa-circle-o text-aqua"></i> <span>Information</span></a></li>
+
+
     </ul>
 
-    <script>
+<!--    <script>
       $(document).ready(function () {
 
         function getRootmenu() {
@@ -115,11 +94,10 @@
         }
         getRootmenu();
       });
-    </script>
+    </script>-->
 
   </section>
   <!-- /.sidebar -->
 </aside>
-
 
 </html>

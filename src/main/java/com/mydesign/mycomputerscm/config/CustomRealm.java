@@ -39,7 +39,7 @@ public class CustomRealm extends AuthorizingRealm {
                 return null;
 
             }
-            return new SimpleAuthenticationInfo(sysUser.getUsername(), sysUser.getPassword(),
+            return new SimpleAuthenticationInfo(sysUser, sysUser.getPassword(),
                     ByteSource.Util.bytes(sysUser.getUsername() + "salt"), getName());
         }
 }

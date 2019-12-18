@@ -2,7 +2,6 @@ package com.mydesign.mycomputerscm.Querydomain;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
 
 
 @Data

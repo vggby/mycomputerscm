@@ -1,21 +1,21 @@
 package com.mydesign.mycomputerscm.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+
 
 @Data
-@Entity
-@Table( name = "sys_rolemenu")
+@TableName( value="sys_rolemenu")
+
 public class RoleMenu {
-    @Id
+    @TableId(value="id")
     private String id;
-    @Column(name = "role_id")
+    @TableField( "role_id")
     private String roleId;
-    @Column(name = "menu_id")
+    @TableField("menu_id")
     private  String menuId;
 
 }

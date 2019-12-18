@@ -1,71 +1,103 @@
 package com.mydesign.mycomputerscm.Service;
-import com.mydesign.mycomputerscm.Querydomain.queryMenu;
+
 import com.mydesign.mycomputerscm.domain.Menu;
-import com.mydesign.mycomputerscm.domain.Role;
-import com.mydesign.mycomputerscm.domain.RoleMenu;
+import com.mydesign.mycomputerscm.domain.SysUser;
 import com.mydesign.mycomputerscm.mapper.MenuMapper;
-import com.mydesign.mycomputerscm.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+
 @Service
 public class MenuServiceImpl implements MenuService{
     @Autowired
     private MenuMapper menuMapper;
+
+
     @Override
-    public List<Menu> getMenuTree(queryMenu querymenu, List<Role> roleList) {
-        List<Menu> list = menuMapper.findAll(new Specification<Menu>() {
-            @Override
-            public Predicate toPredicate(Root<Menu> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                List<Predicate> predicates = new ArrayList<Predicate>();
-                // Subquery<Integer> 表示新建一个子查询语句,泛型是主键类型
-                Subquery<String> roleMenuSubquery = query.subquery(String.class);
-                // 根据子查询所要使用的表建立一个相应的root供它获取该表属性
-                Root<RoleMenu> roleMenuRoot = roleMenuSubquery.from(RoleMenu.class);
-                Predicate equal = criteriaBuilder.equal(roleMenuRoot.get("menuId"), root.get("menuId"));
-                if(roleList!=null && roleList.size()>0){
-                    for (Role role:
-                         roleList) {
-                        predicates.add(criteriaBuilder.equal(roleMenuRoot.get("roleId"), role.getRoleid()));
-                    }
-                }
-                Predicate or = criteriaBuilder.or(predicates.toArray(new Predicate[]{}));
-                Predicate and = criteriaBuilder.and(equal, or);
-                roleMenuSubquery.select(roleMenuRoot.get("id")).where(and);
+    public List<Menu> selectMenusByUser(SysUser user)
+    {
+        List<Menu> menus = new LinkedList<Menu>();
 
-                Predicate exists = criteriaBuilder.exists(roleMenuSubquery);
-                List<Predicate> menupredicates = new ArrayList<Predicate>();
-                if(querymenu!=null&&querymenu.getParentMenuId()!=null){
-                    menupredicates.add(criteriaBuilder.equal(root.get("parentId"), querymenu.getParentMenuId()))  ;
-                }
-                if(querymenu!=null&&querymenu.getMenuid()!=null){
-                    menupredicates.add(criteriaBuilder.equal(root.get("menuId"), querymenu.getMenuid()))  ;
-                }
-                if(menupredicates!=null && menupredicates.size()>0){
-                    Predicate and1 = criteriaBuilder.and(menupredicates.toArray(new Predicate[]{}));
-                    return criteriaBuilder.and(and1,exists);
-                }else{
-                    return exists;
-                }
-            }
-        });
+        menus = menuMapper.selectMenusByUserId(user.getUserid());
+        List<Menu> root = getChildPerms(menus, "root");
+        return root;
+    }
 
-        if (list != null && list.size() > 0) {
-            Iterator<Menu> menuIterator = list.iterator();
-            while (menuIterator.hasNext()) {
-                Menu menu = menuIterator.next();
-                queryMenu qmenu =new queryMenu();
-                qmenu.setParentMenuId(menu.getMenuId());
-                menu.setSubMenuList(getMenuTree(qmenu, roleList));
+
+    /**
+     * 根据父节点的ID获取所有子节点
+     *
+     * @param list 分类表
+     * @param parentId 传入的父节点ID
+     * @return String
+     */
+    public List<Menu> getChildPerms(List<Menu> list, String parentId)
+    {
+        List<Menu> returnList = new ArrayList<Menu>();
+        for (Iterator<Menu> iterator = list.iterator(); iterator.hasNext();)
+        {
+            Menu t = (Menu) iterator.next();
+            // 一、根据传入的某个父节点ID,遍历该父节点的所有子节点
+            if ( parentId.equals(t.getParentId()))
+            {
+                recursionFn(list, t);
+                returnList.add(t);
             }
         }
-
-        return list;
+        return returnList;
+    }
+    /**
+     * 递归列表
+     *
+     * @param list
+     * @param t
+     */
+    private void recursionFn(List<Menu> list, Menu t)
+    {
+        // 得到子节点列表
+        List<Menu> childList = getChildList(list, t);
+        t.setChildren(childList);
+        for (Menu tChild : childList)
+        {
+            if (hasChild(list, tChild))
+            {
+                // 判断是否有子节点
+                Iterator<Menu> it = childList.iterator();
+                while (it.hasNext())
+                {
+                    Menu n = (Menu) it.next();
+                    recursionFn(list, n);
+                }
+            }
+        }
+    }
+    /**
+     * 判断是否有子节点
+     */
+    private boolean hasChild(List<Menu> list, Menu t)
+    {
+        return getChildList(list, t).size() > 0 ? true : false;
+    }
+    /**
+     * 得到子节点列表
+     */
+    private List<Menu> getChildList(List<Menu> list, Menu t)
+    {
+        List<Menu> tlist = new ArrayList<Menu>();
+        Iterator<Menu> it = list.iterator();
+        while (it.hasNext())
+        {
+            Menu n = (Menu) it.next();
+            if (n.getParentId().equals(t.getMenuId()) )
+            {
+                tlist.add(n);
+            }
+        }
+        return tlist;
     }
 
 }

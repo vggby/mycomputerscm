@@ -1,33 +1,29 @@
 package com.mydesign.mycomputerscm.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
-
-import javax.persistence.*;
 
 @Data
-@Entity
-@Table( name = "sys_role")
-@GenericGenerator(name = "jpa-uuid", strategy = "uuid")
+@TableName( value="sys_role")
 public class Role {
     /*角色状态 启用*/
-    @Transient
-    public static final int ROLESTATE_ENABLE=1;
-    /*角色状态 停用*/
-    @Transient
-    public static final int ROLESTATE_DISABLE=2;
-    /*角色状态 删除*/
-    @Transient
-    public static final int ROLESTATE_DEL=3;
 
-    @Id
-    @GeneratedValue(generator = "jpa-uuid")
-    @Column(name = "roleid")
-    private String roleid;
-    @Column(name = "role_name")
+    public static final transient int ROLESTATE_ENABLE=1;
+    /*角色状态 停用*/
+
+    public static  final transient int ROLESTATE_DISABLE=2;
+    /*角色状态 删除*/
+
+    public static final transient int ROLESTATE_DEL=3;
+    @TableId(type= IdType.UUID ,value="role_id")
+    private String roleId;
+   @TableField("role_name")
     private String roleName;
-    @Column(name = "remark")
+
     private String remark;
-    @Column(name = "status")
+
     private Integer status;
 }

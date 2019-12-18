@@ -1,17 +1,13 @@
 package com.mydesign.mycomputerscm.Service;
 
-import com.github.wenhao.jpa.Sorts;
-import com.github.wenhao.jpa.Specifications;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mydesign.mycomputerscm.Querydomain.queryRole;
 import com.mydesign.mycomputerscm.domain.Role;
 import com.mydesign.mycomputerscm.mapper.RoleManaRoleMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import javax.transaction.Transactional;
+
 import java.util.List;
 @Service
 public class RoleServiceImpl implements RoleService{
@@ -21,7 +17,6 @@ public class RoleServiceImpl implements RoleService{
     public Page<Role> findAll(queryRole queryrole) {
         List<Integer> status = queryrole.getStatus();
         String role_name = queryrole.getRole_name();
-
         Integer[] statusstrs=null;
         boolean staflaged= false;
         boolean rname=true;
@@ -33,14 +28,7 @@ public class RoleServiceImpl implements RoleService{
         if(role_name==null||"".equals(role_name)){
             rname=false;
         }
-        Specification<Role> specification = Specifications.<Role>and()
-                .eq(staflaged,"status", statusstrs)
-                .eq(rname,"roleName",role_name)
-                .build();
 
-        Sort sort = Sorts.builder()
-
-                .build();
         int  page = 0;
         int limit = 5 ;
         if (queryrole.getOffset()!=null &&queryrole.getOffset()!=0){
@@ -49,23 +37,33 @@ public class RoleServiceImpl implements RoleService{
         if (queryrole.getLimit()!=null&& queryrole.getLimit()!=0){
             limit=queryrole.getLimit();
         }
-        return  RoleManaRoleMapper.findAll(specification, PageRequest.of(page, limit, sort));
+        LambdaQueryWrapper<Role> roleLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        roleLambdaQueryWrapper.eq(rname,Role::getRoleName,role_name).or().eq(staflaged,Role::getStatus,statusstrs);
+
+
+        Page<Role> rolePage = new Page<Role>(page,limit);
+
+        return  RoleManaRoleMapper.selectPage(rolePage, roleLambdaQueryWrapper);
     }
 
     @Override
-    public Role addRole(Role role){
-        Role save = RoleManaRoleMapper.save(role);
+    public int addRole(Role role){
+        int save = RoleManaRoleMapper.insert(role);
         return save;
     }
     @Override
-    @Transactional
+
     public void deleteRole (String roleid ){
-        RoleManaRoleMapper.deleteByroleid(roleid);
+        LambdaQueryWrapper<Role> roleLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        roleLambdaQueryWrapper.eq(Role::getRoleId,roleid);
+        RoleManaRoleMapper.delete(roleLambdaQueryWrapper);
     }
 
     @Override
     public Role findAllByroleid(String roleid) {
-        return RoleManaRoleMapper.findAllByroleid(roleid);
+        LambdaQueryWrapper<Role> roleLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        roleLambdaQueryWrapper.eq(Role::getRoleId,roleid);
+        return RoleManaRoleMapper.selectOne(roleLambdaQueryWrapper);
     }
 
 }

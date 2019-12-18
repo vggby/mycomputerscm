@@ -1,31 +1,27 @@
 package com.mydesign.mycomputerscm.domain;
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-
-import org.hibernate.annotations.GenericGenerator;
-
-
-import javax.persistence.*;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
 
 
 @Data
-@Entity
-@Table( name = "sys_users")
+
+@TableName( value="sys_users")
 public class SysUser {
-    @GenericGenerator(name = "jpa-uuid", strategy = "uuid")
-    @Id
+
+    @TableId(type= IdType.UUID ,value="user_id")
     private String userid;
-    @Column
+    @TableField
     private String username;
-    @Column
+    @TableField
     private String password;
-    @Column
+    @TableField
     private String remark;
-    @Column
+    @TableField
     private Integer status;
 
 }

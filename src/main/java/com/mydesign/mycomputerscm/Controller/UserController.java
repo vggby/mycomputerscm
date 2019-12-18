@@ -1,6 +1,9 @@
 package com.mydesign.mycomputerscm.Controller;
 
+import com.mydesign.mycomputerscm.Service.MenuService;
 import com.mydesign.mycomputerscm.Service.UserService;
+import com.mydesign.mycomputerscm.ShiroUtils;
+import com.mydesign.mycomputerscm.domain.Menu;
 import com.mydesign.mycomputerscm.domain.ResultInfo;
 import com.mydesign.mycomputerscm.domain.SysUser;
 import org.apache.shiro.SecurityUtils;
@@ -11,7 +14,10 @@ import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author Administrator
@@ -22,6 +28,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private MenuService menuService;
     @GetMapping("/login")
     public String loginUI() {
 
@@ -71,8 +79,13 @@ public class UserController {
     }
 
     @GetMapping("/center")
-    public String centerUI() {
-        return "users/center";
+    public String centerUI(ModelMap mmap) {
+        SysUser user = ShiroUtils.getSysUser();
+        List<Menu> tree = menuService.selectMenusByUser(user);
+        mmap.put("menus", tree);
+        mmap.put("user", user);
+
+        return "system/index";
     }
 
     @PostMapping("/regist")
@@ -85,8 +98,8 @@ public class UserController {
         String md5Pwd = new SimpleHash("MD5", user.getPassword(),
                 ByteSource.Util.bytes(user.getUsername() + "salt"), 2).toHex();
         user.setPassword(md5Pwd);
-        SysUser i = userService.SaveUser(user);
-        if(i==null){
+        int i = userService.SaveUser(user);
+        if(i==0){
             resultInfo.setFlag(false);
             resultInfo.setErrorMsg("注册失败");
         }else{

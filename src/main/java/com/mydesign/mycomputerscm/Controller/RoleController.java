@@ -1,21 +1,22 @@
 package com.mydesign.mycomputerscm.Controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mydesign.mycomputerscm.Querydomain.queryRole;
 import com.mydesign.mycomputerscm.Service.RoleService;
 import com.mydesign.mycomputerscm.domain.ResultInfo;
 import com.mydesign.mycomputerscm.domain.Role;
-import com.mydesign.mycomputerscm.mapper.RoleManaRoleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
-@RequestMapping("")
+@RequestMapping("/system")
 public class RoleController {
 
     @Autowired
@@ -29,7 +30,7 @@ public class RoleController {
             status = new Integer[]{Role.ROLESTATE_ENABLE, Role.ROLESTATE_DISABLE};
 
         }
-        return "users/RoleManalist";
+        return "system/form";
     }
 
 
@@ -45,9 +46,38 @@ public class RoleController {
     }
     @PostMapping("/queryrolelist")
     @ResponseBody
-    public Page<Role> queryrolelist(@RequestBody queryRole qyeryrole) {
+    public Map queryrolelist(@RequestBody Map<String, Object> params) { /* @RequestBody queryRole qyeryrole*/
+        System.out.println(params);
+        System.out.println(params.get("status"));
+        List<Integer> status  = new ArrayList<>();
+        try{
+            ArrayList<Integer> status1 = (ArrayList<Integer>) params.get("status");
+            status=status1;
+
+        }catch (Exception e){
+            Integer a = Integer.parseInt((String) params.get("status")) ;
+            status.add(a);
+        };
+
+        Integer limit = (Integer) params.get("limit");
+        Integer offset = (Integer) params.get("offset");
+        String role_name = (String) params.get("role_name");
+        queryRole qyeryrole = new queryRole();
+        qyeryrole.setStatus(status);
+        qyeryrole.setLimit(limit);
+        qyeryrole.setOffset(offset);
+        qyeryrole.setRole_name(role_name);
         Page<Role> all = rolesrvice.findAll(qyeryrole);
-        return all;
+
+        Map<String,Object> map=new HashMap<String,Object>();
+        map.put("code",0);
+        map.put("msg","");
+        map.put("count",all.getSize());
+        map.put("data",all.getRecords());
+
+
+        return map;
+
     }
 
     @GetMapping("/saverole")
@@ -59,9 +89,9 @@ public class RoleController {
     @PostMapping("/saverole")
     @ResponseBody
     public ResultInfo  saverole( Role role) {
-        Role addRole = rolesrvice.addRole(role);
+        int addRole = rolesrvice.addRole(role);
         ResultInfo resultInfo = new ResultInfo();
-        if (addRole!=null){
+        if (addRole!=0){
             resultInfo.setFlag(true);
             resultInfo.setErrorMsg("添加成功");
 
@@ -85,9 +115,9 @@ public class RoleController {
     @PostMapping("/editrole")
     @ResponseBody
     public ResultInfo editRole(Role role) {
-        Role addRole = rolesrvice.addRole(role);
+        int addRole = rolesrvice.addRole(role);
         ResultInfo resultInfo = new ResultInfo();
-        if (addRole!=null){
+        if (addRole!=0){
             resultInfo.setFlag(true);
             resultInfo.setErrorMsg("修改成功");
 
