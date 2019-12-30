@@ -1,5 +1,8 @@
 package com.mydesign.mycomputerscm.config;
+
+import com.mydesign.mycomputerscm.Service.MenuService;
 import com.mydesign.mycomputerscm.Service.UserService;
+import com.mydesign.mycomputerscm.domain.Menu;
 import com.mydesign.mycomputerscm.domain.SysUser;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
@@ -9,21 +12,35 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 public class CustomRealm extends AuthorizingRealm {
+    @Autowired
+    @Lazy  //只有使用的时候才会加载
+    private MenuService menuService;
     @Autowired
     private UserService userService;
         @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-            String username = (String) SecurityUtils.getSubject().getPrincipal();
+            SysUser principal = (SysUser) SecurityUtils.getSubject().getPrincipal();
             SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
             Set<String> stringSet = new HashSet<>();
-            stringSet.add("user:show");
-            stringSet.add("user:admin");
-            info.setStringPermissions(stringSet);
+            List<Menu> menus = menuService.selectpermissionByUserId(principal);
+            List<String> Permissions = new ArrayList<>();
+            for (Menu menu:
+                    menus) {
+                Permissions.add(menu.getPerms());
+            }
+            if(null!=Permissions&&Permissions.size()>0) {
+                info.addStringPermissions(Permissions);
+            }
+
             return info;
+
         }
 
 
@@ -39,6 +56,9 @@ public class CustomRealm extends AuthorizingRealm {
                 return null;
 
             }
+
+
+
             return new SimpleAuthenticationInfo(sysUser, sysUser.getPassword(),
                     ByteSource.Util.bytes(sysUser.getUsername() + "salt"), getName());
         }

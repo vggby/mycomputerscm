@@ -16,7 +16,6 @@ public class Role {
 
     public static  final transient int ROLESTATE_DISABLE=2;
     /*角色状态 删除*/
-
     public static final transient int ROLESTATE_DEL=3;
     @TableId(type= IdType.UUID ,value="role_id")
     private String roleId;

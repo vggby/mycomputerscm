@@ -13,14 +13,6 @@ server:
     # Tomcat启动初始化的线程数，默认值25
     min-spare-threads: 30
 
-# 日志配置
-logging:
-  level:
-    com.numberone: debug
-    org.springframework: WARN
-    org.spring.springboot.dao: debug
-
-
 
 # Spring配置
 spring:
@@ -42,12 +34,12 @@ spring:
 
 
 
-
 # MyBatisplus
 mybatis-plus:
   # 配置mapper的扫描，找到所有的mapper.xml映射文件
   mapperLocations: classpath*:/mapper/*.xml
-
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 
 debug: true

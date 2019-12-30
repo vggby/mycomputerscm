@@ -1,4 +1,6 @@
 package com.mydesign.mycomputerscm.config;
+
+import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -10,11 +12,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 @Configuration
 public class ShiroConfig {
+
     @Bean(name = "shiroFilter")
     public ShiroFilterFactoryBean shiroFilter( @Qualifier("securityManager")DefaultWebSecurityManager securityManager  ) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
-        shiroFilterFactoryBean.setLoginUrl("/user/login");
+        shiroFilterFactoryBean.setLoginUrl("/system/login");
         /*权限不足跳转页面*/
         shiroFilterFactoryBean.setUnauthorizedUrl("/notRole");
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
@@ -26,8 +29,9 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/fronts/**", "anon");
         filterChainDefinitionMap.put("/img/**", "anon");
         filterChainDefinitionMap.put("/img/**", "anon");
-        filterChainDefinitionMap.put("/user/center", "authc");
         filterChainDefinitionMap.put("/user/register", "anon");
+        filterChainDefinitionMap.put("/login/**", "anon");
+        filterChainDefinitionMap.put("/menu/**", "anon");
         filterChainDefinitionMap.put("/getMenu", "anon");
         filterChainDefinitionMap.put("/getrole", "anon");
         filterChainDefinitionMap.put("/editrole/**", "anon");
@@ -64,6 +68,12 @@ public class ShiroConfig {
         // storedCredentialsHexEncoded默认是true，此时用的是密码加密用的是Hex编码；false时用Base64编码
         hashedCredentialsMatcher.setStoredCredentialsHexEncoded(true);
         return hashedCredentialsMatcher;
+    }
+
+    @Bean
+    public ShiroDialect  shiroDialect() {
+
+        return new ShiroDialect();
     }
 
 

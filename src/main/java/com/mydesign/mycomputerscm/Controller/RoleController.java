@@ -1,14 +1,14 @@
 package com.mydesign.mycomputerscm.Controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mydesign.mycomputerscm.Querydomain.queryRole;
+import com.mydesign.mycomputerscm.Service.MenuService;
 import com.mydesign.mycomputerscm.Service.RoleService;
-import com.mydesign.mycomputerscm.domain.ResultInfo;
-import com.mydesign.mycomputerscm.domain.Role;
+import com.mydesign.mycomputerscm.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,34 +16,19 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/system")
+@RequestMapping("/role")
 public class RoleController {
 
     @Autowired
     private RoleService rolesrvice;
-
+    @Autowired
+    private MenuService menuService;
     private Integer[] status;
 
-    @GetMapping("/getrole")
-    public String listRole() {
-        if (status == null) {
-            status = new Integer[]{Role.ROLESTATE_ENABLE, Role.ROLESTATE_DISABLE};
-
-        }
-        return "system/form";
-    }
 
 
-    @GetMapping("/editrole/{roleid}")
-    public ModelAndView editRole(@PathVariable("roleid") String roleid) {
-        System.out.println(roleid);
-        ModelAndView mv=new ModelAndView();
-        mv.setViewName("users/editrole");
-        Role role = rolesrvice.findAllByroleid(roleid);
-        mv.addObject("role", role);
-        return mv;
 
-    }
+
     @PostMapping("/queryrolelist")
     @ResponseBody
     public Map queryrolelist(@RequestBody Map<String, Object> params) { /* @RequestBody queryRole qyeryrole*/
@@ -57,11 +42,11 @@ public class RoleController {
         }catch (Exception e){
             Integer a = Integer.parseInt((String) params.get("status")) ;
             status.add(a);
-        };
+        }
 
         Integer limit = (Integer) params.get("limit");
         Integer offset = (Integer) params.get("offset");
-        String role_name = (String) params.get("role_name");
+        String role_name = (String) params.get("roleName");
         queryRole qyeryrole = new queryRole();
         qyeryrole.setStatus(status);
         qyeryrole.setLimit(limit);
@@ -75,16 +60,10 @@ public class RoleController {
         map.put("count",all.getSize());
         map.put("data",all.getRecords());
 
-
         return map;
 
     }
 
-    @GetMapping("/saverole")
-    public String  saveroleUI() {
-
-        return "users/saverole";
-    }
 
     @PostMapping("/saverole")
     @ResponseBody
@@ -104,8 +83,8 @@ public class RoleController {
 
     @PostMapping("/deleterole")
     @ResponseBody
-    public ResultInfo  deleteRole( String roleid) {
-        rolesrvice.deleteRole(roleid);
+    public ResultInfo  deleteRole( String roleId) {
+        rolesrvice.deleteRole(roleId);
         ResultInfo resultInfo = new ResultInfo();
         resultInfo.setFlag(true);
         resultInfo.setErrorMsg("删除成功");
@@ -115,7 +94,7 @@ public class RoleController {
     @PostMapping("/editrole")
     @ResponseBody
     public ResultInfo editRole(Role role) {
-        int addRole = rolesrvice.addRole(role);
+        int addRole = rolesrvice.updateRole(role);
         ResultInfo resultInfo = new ResultInfo();
         if (addRole!=0){
             resultInfo.setFlag(true);
@@ -126,6 +105,61 @@ public class RoleController {
             resultInfo.setErrorMsg("修改失败");
         }
         return resultInfo;
+    }
+    /**
+     * 保存角色和菜单权限之间的关系
+     */
+    @RequestMapping("saveRolePermission")
+    @ResponseBody
+    public ResultInfo saveRolePermission(String roleId,String[] ids) {
+        ResultInfo resultInfo = new ResultInfo();
+
+        try {
+            rolesrvice.saveRolePermission(roleId,ids);
+            resultInfo.setFlag(true);
+            resultInfo.setErrorMsg("保存成功");
+            return resultInfo;
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultInfo.setErrorMsg("保存错误");
+            resultInfo.setFlag(false);
+            return resultInfo;
+
+        }
+    }
+    /**
+     * 根据角色ID加载菜单和权限的树的json串
+     */
+    @GetMapping("initPermissionByRoleId")
+    @ResponseBody
+    public DataGridView initPermissionByRoleId(String roleId) {
+        /*1查询所有菜单和权限*/
+        LambdaQueryWrapper<Menu> queryWrapper=new LambdaQueryWrapper<>();
+
+        List<Menu> allPermissions = menuService.list();
+        /**
+         * 2,根据角色ID查询当前角色拥有的所有的权限或菜单ID
+         */
+        List<String> currentRolePermissions=rolesrvice.queryRolePermissionIdsByRid(roleId);
+        List<Menu> menulist=new ArrayList<>();
+        if (currentRolePermissions!=null && currentRolePermissions.size()>0){
+            queryWrapper.in(Menu::getMenuId, currentRolePermissions);
+            menulist = menuService.list(queryWrapper);
+        }
+        //构造 List<TreeNode>
+        List<TreeNode> nodes=new ArrayList<>();
+        for (Menu p1 : allPermissions) {
+            String checkArr="0";
+            for (Menu p2 : menulist) {
+                if(p1.getMenuId().equals(p2.getMenuId())) {
+                    checkArr="1";
+                    break;
+                }
+            }
+            Boolean spread=true;
+            nodes.add(new TreeNode(p1.getMenuId(), p1.getParentId(), p1.getMenuName(), spread, checkArr));
+        }
+        return new DataGridView(nodes);
     }
 
 }

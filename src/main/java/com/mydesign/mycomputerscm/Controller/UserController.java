@@ -2,22 +2,15 @@ package com.mydesign.mycomputerscm.Controller;
 
 import com.mydesign.mycomputerscm.Service.MenuService;
 import com.mydesign.mycomputerscm.Service.UserService;
-import com.mydesign.mycomputerscm.ShiroUtils;
-import com.mydesign.mycomputerscm.domain.Menu;
 import com.mydesign.mycomputerscm.domain.ResultInfo;
 import com.mydesign.mycomputerscm.domain.SysUser;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.*;
 import org.apache.shiro.crypto.hash.SimpleHash;
-import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author Administrator
@@ -30,63 +23,6 @@ public class UserController {
     private UserService userService;
     @Autowired
     private MenuService menuService;
-    @GetMapping("/login")
-    public String loginUI() {
-
-        return "users/userlogin";
-    }
-    @PostMapping("/login")
-    @ResponseBody
-    public ResultInfo login(SysUser user) {
-        ResultInfo resultInfo = new ResultInfo();
-
-        // 从SecurityUtils里边创建一个 subject
-        Subject subject = SecurityUtils.getSubject();
-        // 在认证提交前准备 token（令牌）
-        UsernamePasswordToken token = new UsernamePasswordToken(user.getUsername(), user.getPassword());
-        // 执行认证登陆
-        try {
-            subject.login(token);
-        } catch (UnknownAccountException uae) {
-            resultInfo.setFlag(false);
-            resultInfo.setErrorMsg("未知账户");
-            resultInfo.setData(null);
-            return resultInfo;
-        } catch (IncorrectCredentialsException ice) {
-            resultInfo.setFlag(false);
-            resultInfo.setErrorMsg("密码不正确");
-            return resultInfo;
-
-        }
-        if (subject.isAuthenticated()) {
-            resultInfo.setFlag(true);
-            resultInfo.setData(null);
-            return resultInfo;
-        }else
-        {
-            resultInfo.setFlag(false);
-            resultInfo.setErrorMsg("登录不成功");
-            resultInfo.setData(null);
-            return resultInfo;
-        }
-
-
-    }
-    @GetMapping("/register")
-    public String registerUI() {
-
-        return "users/register";
-    }
-
-    @GetMapping("/center")
-    public String centerUI(ModelMap mmap) {
-        SysUser user = ShiroUtils.getSysUser();
-        List<Menu> tree = menuService.selectMenusByUser(user);
-        mmap.put("menus", tree);
-        mmap.put("user", user);
-
-        return "system/index";
-    }
 
     @PostMapping("/regist")
     @ResponseBody
@@ -108,5 +44,7 @@ public class UserController {
         }
         return resultInfo;
     }
+
+
 
 }

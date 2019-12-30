@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mydesign.mycomputerscm.mapper.RoleMapper">
+	<!-- 根据角色ID查询当前角色拥有的所有的权限或菜单ID -->
+	<select id="queryRolePermissionIdsByRid" resultType="java.lang.String">
+		select menu_id from sys_rolemenu where role_id=#{value}
+	</select>
+	<delete id="deleteRoleMenuByRid">
+		delete from sys_rolemenu where role_id=#{value}
+	</delete>
+	<!-- 保存角色和菜单权限之间的关系 -->
+	<insert id="saveRoleMenu">
+		insert into sys_rolemenu(role_id,menu_id) values(#{role_id},#{menu_id})
+	</insert>
+</mapper>

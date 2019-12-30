@@ -1,5 +1,6 @@
 package com.mydesign.mycomputerscm.Service;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mydesign.mycomputerscm.domain.Menu;
 import com.mydesign.mycomputerscm.domain.SysUser;
 import com.mydesign.mycomputerscm.mapper.MenuMapper;
@@ -12,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Service
-public class MenuServiceImpl implements MenuService{
+public class MenuServiceImpl  extends ServiceImpl<MenuMapper, Menu> implements MenuService{
     @Autowired
     private MenuMapper menuMapper;
 
@@ -25,6 +26,16 @@ public class MenuServiceImpl implements MenuService{
         menus = menuMapper.selectMenusByUserId(user.getUserid());
         List<Menu> root = getChildPerms(menus, "root");
         return root;
+    }
+
+    @Override
+    public List<Menu> selectpermissionByUserId(SysUser user)
+    {
+        List<Menu> menus = new LinkedList<Menu>();
+
+        menus = menuMapper.selectpermissionByUserId(user.getUserid());
+
+        return menus;
     }
 
 
@@ -99,5 +110,7 @@ public class MenuServiceImpl implements MenuService{
         }
         return tlist;
     }
+
+
 
 }

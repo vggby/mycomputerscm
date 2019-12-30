@@ -14,4 +14,10 @@ public interface MenuMapper extends BaseMapper<Menu> {
      * @return 菜单列表
      */
     public List<Menu>  selectMenusByUserId(@Param("user_id")String userId);
+    /**
+     * 根据角色ID查询当前角色拥有的所有的权限
+     * @param roleId
+     * @return
+     */
+    List<Menu> selectpermissionByUserId(String roleId);
 }

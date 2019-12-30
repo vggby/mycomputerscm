@@ -14,7 +14,7 @@
 </head>
 <body>
 <div  class="login">
-    <img class="logo" th:src="@{images/logo-login.png}" />
+    <img class="logo" th:src="@{../../../static/images/logo-login.png}" />
     <form id="loginForm" >
         <div class="use">
             <label class="f-l" for="useName">用户名</label>
@@ -40,7 +40,7 @@
 <script type="text/javascript">
     $("#bt_login").click(function() {
         $.ajax({
-            url: "/user/login",
+            url: "/login/login",
             data: {
                 username: $("#useName").val(),
                 password: $("#usepsd").val()
@@ -53,7 +53,7 @@
                 if(data.flag){
                     alert("111");
                     //登录成功,给errorMsg添加提示信息
-                    window.location.href="/user/center";
+                    window.location.href="/system/center";
                     return false;
                 }else{
                     alert(data.errorMsg);

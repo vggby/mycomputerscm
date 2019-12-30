@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mydesign.mycomputerscm.Querydomain.queryRole;
 import com.mydesign.mycomputerscm.domain.Role;
-import com.mydesign.mycomputerscm.mapper.RoleManaRoleMapper;
+import com.mydesign.mycomputerscm.mapper.RoleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class RoleServiceImpl implements RoleService{
     @Autowired
-    private RoleManaRoleMapper RoleManaRoleMapper;
+    private RoleMapper RoleManaRoleMapper;
     @Override
     public Page<Role> findAll(queryRole queryrole) {
         List<Integer> status = queryrole.getStatus();
@@ -51,6 +51,16 @@ public class RoleServiceImpl implements RoleService{
         int save = RoleManaRoleMapper.insert(role);
         return save;
     }
+
+    @Override
+    public int updateRole(Role role){
+        LambdaQueryWrapper<Role> roleLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        roleLambdaQueryWrapper.eq(Role::getRoleId,role.getRoleId());
+        int save = RoleManaRoleMapper.update(role,roleLambdaQueryWrapper);
+        return save;
+    }
+
+
     @Override
 
     public void deleteRole (String roleid ){
@@ -64,6 +74,25 @@ public class RoleServiceImpl implements RoleService{
         LambdaQueryWrapper<Role> roleLambdaQueryWrapper = new LambdaQueryWrapper<>();
         roleLambdaQueryWrapper.eq(Role::getRoleId,roleid);
         return RoleManaRoleMapper.selectOne(roleLambdaQueryWrapper);
+    }
+
+    @Override
+    public List<String> queryRolePermissionIdsByRid(String roleId) {
+
+
+        return RoleManaRoleMapper.queryRolePermissionIdsByRid(roleId);
+    }
+
+    @Override
+    public void saveRolePermission(String roleId, String[] ids) {
+
+        //根据rid删除sys_role_permission
+        RoleManaRoleMapper.deleteRoleMenuByRid(roleId);
+        if(ids!=null&&ids.length>0) {
+            for (String pid : ids) {
+                RoleManaRoleMapper.saveRoleMenu(roleId,pid);
+            }
+        }
     }
 
 }
