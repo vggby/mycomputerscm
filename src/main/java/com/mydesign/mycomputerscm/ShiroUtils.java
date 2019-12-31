@@ -1,5 +1,6 @@
 package com.mydesign.mycomputerscm;
 
+import com.mydesign.mycomputerscm.domain.ActiverUser;
 import com.mydesign.mycomputerscm.domain.SysUser;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
@@ -28,11 +29,12 @@ public class ShiroUtils
 
     public static SysUser getSysUser()
     {
-        SysUser user = null;
-        SysUser obj =  (SysUser) SecurityUtils.getSubject().getPrincipal();
+
+        ActiverUser obj =  (ActiverUser) SecurityUtils.getSubject().getPrincipal();
         if ( obj!=null)
         {
-            return  obj;
+            SysUser sysuser=obj.getUser();
+            return  sysuser;
 
         }
         return null;

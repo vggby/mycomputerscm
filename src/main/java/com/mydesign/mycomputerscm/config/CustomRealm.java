@@ -2,6 +2,7 @@ package com.mydesign.mycomputerscm.config;
 
 import com.mydesign.mycomputerscm.Service.MenuService;
 import com.mydesign.mycomputerscm.Service.UserService;
+import com.mydesign.mycomputerscm.domain.ActiverUser;
 import com.mydesign.mycomputerscm.domain.Menu;
 import com.mydesign.mycomputerscm.domain.SysUser;
 import org.apache.shiro.SecurityUtils;
@@ -15,9 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 public class CustomRealm extends AuthorizingRealm {
     @Autowired
     @Lazy  //只有使用的时候才会加载
@@ -26,17 +25,14 @@ public class CustomRealm extends AuthorizingRealm {
     private UserService userService;
         @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-            SysUser principal = (SysUser) SecurityUtils.getSubject().getPrincipal();
+            ActiverUser activerUser = (ActiverUser) SecurityUtils.getSubject().getPrincipal();
+            SysUser user=activerUser.getUser();
+            /*取权限*/
+            List<String> permissions = activerUser.getPermissions();
             SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-            Set<String> stringSet = new HashSet<>();
-            List<Menu> menus = menuService.selectpermissionByUserId(principal);
-            List<String> Permissions = new ArrayList<>();
-            for (Menu menu:
-                    menus) {
-                Permissions.add(menu.getPerms());
-            }
-            if(null!=Permissions&&Permissions.size()>0) {
-                info.addStringPermissions(Permissions);
+            if(null!=permissions&&permissions.size()>0) {
+                /*授权*/
+                info.addStringPermissions(permissions);
             }
 
             return info;
@@ -49,17 +45,26 @@ public class CustomRealm extends AuthorizingRealm {
             System.out.println("-------身份认证方法--------");
             UsernamePasswordToken token = (UsernamePasswordToken) authenticationToken;
             SysUser sysUser = userService.findbyUsername(token.getUsername());
-
+            ActiverUser activerUser = new ActiverUser();
             //根据用户名从数据库获取密码
-
             if (sysUser == null) {
                 return null;
+            }
+            activerUser.setUser(sysUser);
 
+            /*从数据库读出权限*/
+            List<Menu> menus = menuService.selectpermissionByUserId(sysUser);
+            List<String> Permissions = new ArrayList<>();
+            for (Menu menu:
+                    menus) {
+                Permissions.add(menu.getPerms());
             }
 
+            if(null!=Permissions&&Permissions.size()>0) {
+                activerUser.setPermissions(Permissions);
+            }
 
-
-            return new SimpleAuthenticationInfo(sysUser, sysUser.getPassword(),
+            return new SimpleAuthenticationInfo(activerUser, sysUser.getPassword(),
                     ByteSource.Util.bytes(sysUser.getUsername() + "salt"), getName());
         }
 }
