@@ -70,4 +70,10 @@ public class TreeNode {
     }
 
 
+    public TreeNode(String deptId, String deptName, boolean spread) {
+        super();
+        this.id = deptId;
+        this.title = deptName;
+        this.spread = spread;
+    }
 }

@@ -1,0 +1,791 @@
+CREATE OR REPLACE PACKAGE BODY stat_83583_newcrm AS
+function get_83583_newcrm(V_STAT_COND in varchar2) return pipeoutput PIPELINED
+  is PRAGMA AUTONOMOUS_TRANSACTION;
+
+  sSql    stat_common_newcrm.pipesql;
+  sCond   stat_common_newcrm.pipecond;
+  sInput  stat_common_newcrm.pipeinput;
+  sAnd    stat_common_newcrm.pipeand;
+  sDefine stat_common_newcrm.pipedefine;
+  sMonth  stat_common_newcrm.pipemonth;
+  sDay  stat_common_newcrm.pipeday;
+  sRegion stat_common_newcrm.piperegion;
+  sLink stat_common_newcrm.pipelink;
+  type ref_data_cursor is ref cursor;
+  dataCursor ref_data_cursor;
+  oneRecord  piperecord;
+  startDate date:=sysdate;
+  sTemp varchar2(64);
+  state_type varchar2(10);
+  groupbystr varchar2(200);
+  headstr varchar(1024);
+  commision varchar2(32);
+  commision_tax varchar2(32);
+begin
+sInput := stat_common_newcrm.get_input_str(V_STAT_COND);
+sLink := stat_common_newcrm.get_db_link(0);
+
+state_type:=sInput(9);
+if state_type='0' then
+  groupbystr:='';
+  headstr:='';
+end if;
+
+if state_type='1' then--按受理地区统计
+   headstr:='select to_char(nvl(certificate_type,''0'')) pay_type,
+       so_region_code,
+       null so_county_code,
+       null so_org_name,
+       null is_region_code,
+       null is_county_code,
+       null is_org_name,
+       null org_role_type_id,
+       null op_id,
+       billing_cycle_id,
+       business_id,
+       judge,
+       sum(cash_total),
+       sum(paid_total),
+       e1,
+       sum(e2),
+       sum(e3),
+       sum(e4),
+       e5,
+       sum(e6),
+       sum(e7),
+       sum(e8),
+       e9,
+       sum(e10),
+       sum(e11),
+       sum(e12),
+       e13,
+       sum(e14),
+       sum(e15),
+       sum(e16),
+       sum(paid_prepay),
+       sum(over_prepay),
+
+          a.BILL_ID,
+       REGION_ID,
+
+       peer_seq,
+       (select d.ITEM_ID
+          from base.bs_busi_balance d
+         where a.business_id = d.business_id) ITEM_ID,
+       count(1)
+
+ from ( ';
+
+  groupbystr:='   )aa group by so_region_code,billing_cycle_id,business_id,judge,e1,e5,e9,e13,certificate_type';
+end if;
+if state_type='2' then--按受理县区统计
+  headstr:='select to_char(nvl(certificate_type,''0'')) pay_type ,
+       so_region_code,
+       so_county_code,
+       null so_org_name,
+       null is_region_code,
+       null is_county_code,
+       null is_org_name,
+       null org_role_type_id,
+       null op_id,
+       billing_cycle_id,
+       business_id,
+       judge,
+       sum(cash_total),
+       sum(paid_total),
+       e1,
+       sum(e2),
+       sum(e3),
+       sum(e4),
+       e5,
+       sum(e6),
+       sum(e7),
+       sum(e8),
+       e9,
+       sum(e10),
+       sum(e11),
+       sum(e12),
+       e13,
+       sum(e14),
+       sum(e15),
+       sum(e16),
+       sum(paid_prepay),
+       sum(over_prepay),
+              a.BILL_ID,
+       REGION_ID,
+
+       peer_seq,
+       (select d.ITEM_ID
+          from base.bs_busi_balance d
+         where a.business_id = d.business_id) ITEM_ID,
+       count(1)
+
+ from ( ';
+  groupbystr:=' )aa group by so_region_code,so_county_code,billing_cycle_id,business_id,judge,e1,e5,e9,e13,certificate_type';
+end if;
+if state_type='3' then--按受理组织统计
+  headstr:='select to_char(nvl(certificate_type,''0'')) pay_type ,
+       so_region_code,
+       so_county_code,
+       so_org_name,
+       null is_region_code,
+       null is_county_code,
+       null is_org_name,
+       org_role_type_id,
+       null op_id,
+       billing_cycle_id,
+       business_id,
+       judge,
+       sum(cash_total),
+       sum(paid_total),
+       e1,
+       sum(e2),
+       sum(e3),
+       sum(e4),
+       e5,
+       sum(e6),
+       sum(e7),
+       sum(e8),
+       e9,
+       sum(e10),
+       sum(e11),
+       sum(e12),
+       e13,
+       sum(e14),
+       sum(e15),
+       sum(e16),
+       sum(paid_prepay),
+       sum(over_prepay),
+              a.BILL_ID,
+       REGION_ID,
+
+       peer_seq,
+       (select d.ITEM_ID
+          from base.bs_busi_balance d
+         where a.business_id = d.business_id) ITEM_ID,
+       count(1)
+
+ from ( ';
+  groupbystr:=' )aa group by so_region_code,so_county_code,so_org_name,org_role_type_id,billing_cycle_id,business_id,judge,e1,e5,e9,e13,certificate_type';
+end if;
+if state_type='4' then--按工号统计
+  headstr:='select to_char(nvl(certificate_type,''0'')) pay_type,
+       so_region_code,
+       so_county_code,
+       so_org_name,
+       null is_region_code,
+       null is_county_code,
+       null is_org_name,
+       org_role_type_id,
+       op_id,
+       billing_cycle_id,
+       business_id,
+       judge,
+       sum(cash_total),
+       sum(paid_total),
+       e1,
+       sum(e2),
+       sum(e3),
+       sum(e4),
+       e5,
+       sum(e6),
+       sum(e7),
+       sum(e8),
+       e9,
+       sum(e10),
+       sum(e11),
+       sum(e12),
+       e13,
+       sum(e14),
+       sum(e15),
+       sum(e16),
+       sum(paid_prepay),
+       sum(over_prepay),
+              a.BILL_ID,
+       REGION_ID,
+
+       peer_seq,
+       (select d.ITEM_ID
+          from base.bs_busi_balance d
+         where a.business_id = d.business_id) ITEM_ID,
+       count(1)
+
+ from ( ';
+  groupbystr:=' )aa group by so_region_code,so_county_code,so_org_name,org_role_type_id,op_id,billing_cycle_id,business_id,judge,e1,e5,e9,e13,certificate_type';
+
+end if;
+
+if state_type='5' then--按归属县市统计
+  headstr:='select  to_char(nvl(certificate_type,''0'')) pay_type,
+       null so_region_code,
+       null so_county_code,
+       null so_org_name,
+       is_region_code,
+       is_county_code,
+       null is_org_name,
+       null org_role_type_id,
+       null op_id,
+       billing_cycle_id,
+       business_id,
+       judge,
+       sum(cash_total),
+       sum(paid_total),
+       e1,
+       sum(e2),
+       sum(e3),
+       sum(e4),
+       e5,
+       sum(e6),
+       sum(e7),
+       sum(e8),
+       e9,
+       sum(e10),
+       sum(e11),
+       sum(e12),
+       e13,
+       sum(e14),
+       sum(e15),
+       sum(e16),
+       sum(paid_prepay),
+       sum(over_prepay),
+              a.BILL_ID,
+       REGION_ID,
+
+       peer_seq,
+       (select d.ITEM_ID
+          from base.bs_busi_balance d
+         where a.business_id = d.business_id) ITEM_ID,
+       count(1)
+
+ from ( ';
+  groupbystr:=' )aa group by is_region_code,is_county_code,billing_cycle_id,business_id,judge,e1,e5,e9,e13,certificate_type';
+end if;
+
+if state_type='6' then--按归属地区统计
+  headstr:='select to_char(nvl(certificate_type,''0'')) pay_type,
+       null so_region_code,
+       null so_county_code,
+       null so_org_name,
+       is_region_code,
+       null is_county_code,
+       null is_org_name,
+       null org_role_type_id,
+       null op_id,
+       billing_cycle_id,
+       business_id,
+       judge,
+       sum(cash_total),
+       sum(paid_total),
+       e1,
+       sum(e2),
+       sum(e3),
+       sum(e4),
+       e5,
+       sum(e6),
+       sum(e7),
+       sum(e8),
+       e9,
+       sum(e10),
+       sum(e11),
+       sum(e12),
+       e13,
+       sum(e14),
+       sum(e15),
+       sum(e16),
+       sum(paid_prepay),
+       sum(over_prepay),
+              a.BILL_ID,
+       REGION_ID,
+
+       peer_seq,
+       (select d.ITEM_ID
+          from base.bs_busi_balance d
+         where a.business_id = d.business_id) ITEM_ID,
+       count(1)
+
+ from ( ';
+  groupbystr:=' )aa group by is_region_code,billing_cycle_id,business_id,judge,e1,e5,e9,e13,certificate_type';
+end if;
+
+  sDefine(1) :='
+    select to_char(nvl(a.certificate_type,''0'')) certificate_type,
+       a.opt_region_id so_region_code,
+       --c.county_id so_county_code,
+       a.county_code so_county_code,
+       a.org_id so_org_name,
+       nvl(a.acct_region_id, opt_region_id) is_region_code,
+       nvl(a.acct_county_code, a.county_code) is_county_code,
+       a.org_id is_org_name,
+       c.org_role_type_id org_role_type_id,
+       a.op_id op_id,
+       a.billing_cycle_id billing_cycle_id,
+       a.business_id business_id,
+       decode(a.opt_region_id - a.acct_region_id, 0, ''本地'',''异地'') judge,
+       a.amount / 100 cash_total,
+       0 paid_total,
+       e.funcrow1 e1,
+       e.funcrow2 e2,
+       e.funcrow3 e3,
+       e.funcrow4 e4,
+       e.funcrow5 e5,
+       e.funcrow6 e6,
+       e.funcrow7 e7,
+       e.funcrow8 e8,
+       e.funcrow9 e9,
+       e.funcrow10 e10,
+       e.funcrow11 e11,
+       e.funcrow12 e12,
+       e.funcrow13 e13,
+       e.funcrow14 e14,
+       e.funcrow15 e15,
+       e.funcrow16 e16,
+       0 paid_prepay,
+       nvl(a.balance,0)/100 over_prepay,
+              a.BILL_ID,
+       REGION_ID,
+
+       peer_seq,
+       (select d.ITEM_ID
+          from base.bs_busi_balance d
+         where a.business_id = d.business_id) ITEM_ID,
+       1
+
+      From  ';
+
+  sDefine(3) :='
+    where 1=1 and a.opt_region_id=a.region_id
+    and a.org_id = c.organize_id
+    and nvl(a.certificate_type,''0'')<>''6''
+    and a.business_id in (
+    120000004101,
+    120000004102,
+    120000004108,
+    120000004114,
+    120000004140,
+    120000004900,
+    120000005064,
+    120000004127,
+    120000004128,
+    121000000050,
+    121000000051,
+    120000004132,
+    120000004148,
+    120000004162,
+    120000004163,
+    121000004163,
+    120000004207,
+    120000004590,
+    121000000052,
+    121000000053,
+    120000004207,
+    120000004208,
+    120000004240,
+    120000004241,
+    120000004321,
+    120000004385,
+    120000004386,
+    120000004658,
+    120000004659,
+    120000004612,
+    120000004613,
+    120000004571,
+    120000004572,
+    121000000062,
+    121000000063,
+    121000000064,
+    121000000065,
+    100000004357,
+    100000004358,
+    121000004162,
+    120000004464,
+    120000004539,
+    120000004538,
+    120000004476,
+    120000004477,
+    120000004735,
+    120000004736,
+    121000000054,
+    121000000055,
+    120000004608，
+    120000004562,
+    120000004565,
+    120000004609,
+    120000004328,
+    120000004329,121000002563,121000002564,121000004647,121000002588,
+    121000002533,121000002534,121000002531,121000002532,121000002589,121000002565
+    )
+    and a.op_id not in( select distinct op_id from rpt.stat_filter_op where report_no=83583 and state=1 )
+        ';
+  sAnd(1) := stat_common_newcrm.get_date_str('   and a.pay_date >=',sInput(1));
+  sAnd(2) := stat_common_newcrm.get_date_str('  and a.pay_date <=',sInput(2));
+  sAnd(3) := stat_common_newcrm.get_number_str(' and a.opt_region_id in ',sInput(3));
+  sAnd(4) := stat_common_newcrm.get_number_str('  and a.county_code in ',sInput(4));
+  sAnd(5) := stat_common_newcrm.get_number_str('  and a.org_id in ',sInput(5));
+  sAnd(6) := stat_common_newcrm.get_number_str('  and a.op_id in ',sInput(6));
+  sAnd(7) := stat_common_newcrm.get_number_str('  and c.org_role_type_id in ',sInput(7));
+  sAnd(8) := stat_common_newcrm.get_number_str('  and a.business_id in ',sInput(8));
+  sDefine(4) := '' ||sAnd(1)||sAnd(2)||sAnd(3)||sAnd(4)||sAnd(5)||sAnd(6)||sAnd(7)||sAnd(8);
+  sRegion := stat_common_newcrm.get_region_center(sInput( 3));
+  sMonth := stat_common_newcrm.get_month_str(sInput(1),sInput(2));
+  for i in 1..sRegion.count loop
+  for j in 1..sMonth.count loop
+  sDefine(2) := 'ams'||trunc(sRegion(i)/1000)||'.am_payment_'||mod(sRegion(i),1000)||'_'||sMonth(j)||sLink('ams'||trunc(sRegion(i)/1000))||' a, sec.sec_organize'||sLink('sec')||' c,
+  table(stat_row_newcrm.get_func_row16_new(nvl(a.late_fee/100,0),nvl(a.derate_late_fee,0)/100,'||substr(sMonth(j),1,4)||',to_char(a.pay_date,''yyyymmddhh24miss''))) e';
+  --20180612 add by luozk
+  --table(stat_row_newcrm.get_func_row16(nvl(a.late_fee/100,0)||''##''||nvl(a.derate_late_fee,0)/100||''##'||substr(sMonth(j),1,4)||'##''||to_char(a.pay_date,''yyyymmddhh24miss''),'''',''get_late_fee_info2_new'')) e';
+  sSql(1) := '' ||headstr||sDefine(1)||sDefine(2)||sDefine(3)||sDefine(4)||groupbystr ;
+  open dataCursor for sSql(1);
+    loop
+      fetch dataCursor into oneRecord;
+  commit;
+        exit when dataCursor% notfound;
+        --代理商直接为用户缴费
+        if (oneRecord.ofield11='121000000062')or(oneRecord.ofield11='120000004464')or(oneRecord.ofield11='121000000064') then
+           oneRecord.ofield11 :='124900004320';
+        end if;
+        --代理商直接为用户缴费撤单
+        if (oneRecord.ofield11='121000000063')or(oneRecord.ofield11='120000004465')or(oneRecord.ofield11='121000000065') then
+           oneRecord.ofield11 :='124900004430';
+        end if;
+        PIPE ROW (oneRecord);
+    end loop;
+    close dataCursor;
+  end loop;
+  end loop;
+  sDefine(1) :='
+   select to_char(nvl(certificate_type,''0'')) certificate_type,
+   a.opt_region_id so_region_code,
+       --c.county_id so_county_code,
+       a.county_code so_county_code,
+       a.org_id so_org_name,
+       (select parent_district_id
+          from base.bs_district'||sLink('base')||'
+         where district_id = a.agent_acct_county_code) is_region_code,
+       a.agent_acct_county_code is_county_code,
+       a.agent_org_id is_org_name,
+       c.org_role_type_id org_role_type_id,
+       a.op_id op_id,
+       a.billing_cycle_id billing_cycle_id,
+       decode(a.business_id,120000004590,
+       (decode(a.agent_busi_type,1,124900004594,5,124900004592,120000004590)),
+       120000004591,(decode(a.agent_busi_type,1,124900004595,5,124900004593,120000004590)),
+       a.business_id) business_id,
+       decode((select parent_district_id - a.opt_region_id
+                from base.bs_district'||sLink('base')||'
+               where district_id = a.agent_acct_county_code),
+              0,
+              ''本地'',
+              ''异地'') judge,
+       a.amount/ 100 cash_total,
+       0 paid_total,
+       ''0%'' e1,
+       0 e2,
+       0 e3,
+       0 e4,
+       ''0%'' e5,
+       0 e6,
+       0 e7,
+       0 e8,
+       ''0%'' e9,
+       0 e10,
+       0 e11,
+       0 e12,
+       ''0%'' e13,
+       0 e14,
+       nvl(commision,0)/100 e15,
+       nvl(commision_tax,0)/100 e16,
+       0 paid_prepay,
+       a.amount / 100 over_prepay,
+              a.BILL_ID,
+       REGION_ID,
+
+       peer_seq,
+       (select d.ITEM_ID
+          from base.bs_busi_balance d
+         where a.business_id = d.business_id) ITEM_ID,
+       1
+
+
+      From  ';
+  ---由于20170704代理商新装入网现结酬金的业务有改变，报表口径需要改动
+  --dbms_output.put_line(sInput(2));
+  if to_date(substr(sInput(2),1,8),'yyyymmdd')>to_date('20170704','yyyymmdd') then
+   sDefine(3) :='
+    where  a.org_id=c.organize_id and a.business_id not in (120000005001,120000004520)
+    and a.operation_type  in (''X'' ,''Q'', ''P'',''O'',''T'',''S'',''F'')
+    and nvl(a.certificate_type,''0'')<>''6''
+    and a.op_id not in(
+    select distinct op_id from rpt.stat_filter_op where report_no=83583 and state=1)
+       ';
+  else
+    sDefine(3) :='
+    where  a.org_id=c.organize_id and a.business_id not in (120000005000,120000005001,120000004520,120000004499)
+    and a.operation_type  in (''X'' ,''Q'', ''P'',''O'',''T'',''S'',''F'')
+    and nvl(a.certificate_type,''0'')<>''6''
+    and a.op_id not in( select distinct op_id from rpt.stat_filter_op where report_no=83583 and state=1 )
+       ';
+  end if;
+/*  sDefine(3) :='
+    where  a.org_id=c.organize_id and a.business_id not in (120000005000,120000005001,120000004520,120000004499)
+    and a.operation_type  in (''X'' ,''Q'', ''P'',''O'',''T'',''S'',''F'')
+    and nvl(a.certificate_type,''0'')<>''6''
+    and a.op_id not in(
+    select distinct op_id from rpt.stat_filter_op where report_no=3583 and state=1
+    )
+       ';*/
+  sAnd(1) := stat_common_newcrm.get_date_str('     and a.pay_date >= ',sInput(1));
+  sAnd(2) := stat_common_newcrm.get_date_str('   and a.pay_date <= ',sInput(2));
+  sAnd(3) := stat_common_newcrm.get_number_str('   and a.opt_region_id in ',sInput(3));
+  sAnd(4) := stat_common_newcrm.get_number_str('   and a.county_code in ',sInput(4));
+  sAnd(5) := stat_common_newcrm.get_number_str('   and a.org_id in ',sInput(5));
+  sAnd(6) := stat_common_newcrm.get_number_str('   and a.op_id in ',sInput(6));
+  sAnd(7) := stat_common_newcrm.get_number_str('   and c.org_role_type_id in',sInput(7));
+  sAnd(8) := stat_common_newcrm.get_number_str('   and a.business_id in',sInput(8));
+  sDefine(4) := '' ||sAnd(1)||sAnd(2)||sAnd(3)||sAnd(4)||sAnd(5)||sAnd(6)||sAnd(7)||sAnd(8);
+  --sRegion := stat_common_newcrm.get_region_center(sInput( 3));
+  --sRegion := stat_common_newcrm.get_all_region_center(sInput( 3));
+  sRegion := stat_common_newcrm.get_all_region_center(0);
+  sMonth := stat_common_newcrm.get_month_str(sInput(1),sInput(2));
+  for i in 1..sRegion.count loop
+  for j in 1..sMonth.count loop
+  sDefine(2) := 'ams'||trunc(sRegion(i)/1000)||'.am_agent_payment_'||mod(sRegion(i),1000)||'_'||sMonth(j)||sLink('ams'||trunc(sRegion(i)/1000))||' a,       sec.sec_organize'||sLink('sec')||'                   c';
+  sSql(2) := '' ||headstr||sDefine(1)||sDefine(2)||sDefine(3)||sDefine(4)||groupbystr ;
+  open dataCursor for sSql(2);
+    loop
+      fetch dataCursor into oneRecord;
+  commit;
+        exit when dataCursor% notfound;
+        commision:=nvl(oneRecord.ofield29,'0');
+        commision_tax:=nvl(oneRecord.ofield30,'0');
+        oneRecord.ofield29:='0';
+        oneRecord.ofield30:='0';
+        --针对CBOSS异地缴费进行转换 代理商风险帐户控制扣款
+        if oneRecord.ofield11='500014001010' then
+           oneRecord.ofield11 :='124900004429';
+           oneRecord.ofield12:='本地';
+        end if;
+        --针对CBOSS异地缴费进行转换 代理商风险帐户?刂瓶劭?
+/*        if oneRecord.ofield10='500014001020' then
+           oneRecord.ofield10 :='124900004430';
+           oneRecord.ofield11:='本地';
+        end if;*/
+        --代理商风险帐户控制扣款
+        if (oneRecord.ofield11='121000000062')or(oneRecord.ofield11='120000004464') then
+           oneRecord.ofield11 :='124900004429';
+           oneRecord.ofield12:='本地';
+        end if;
+        --代理商风险帐户控制扣款撤单
+        if (oneRecord.ofield11='121000000063')or(oneRecord.ofield11='120000004465')or(oneRecord.ofield11='500014001020') then
+           oneRecord.ofield11 :='124900004430';
+           oneRecord.ofield12:='本地';
+        end if;
+        PIPE ROW (oneRecord);
+        --空充预存款返还佣金
+        if oneRecord.ofield11='124900004594' then
+           oneRecord.ofield11 :='124900004419';
+           oneRecord.ofield13:=to_char(0-commision);
+           oneRecord.ofield32:='0';
+           PIPE ROW (oneRecord);
+        end if;
+        --空充预存款返还佣金撤单
+        if oneRecord.ofield11='124900004595' then
+           oneRecord.ofield11 :='124900004420';
+           oneRecord.ofield13:=to_char(0-commision);
+           oneRecord.ofield32:='0';
+           PIPE ROW (oneRecord);
+        end if;
+        --代理商佣金税金gx
+        if oneRecord.ofield11='124900004419' then
+           oneRecord.ofield11 :='124900004495';
+           oneRecord.ofield13:=to_char(commision_tax);
+           oneRecord.ofield32:='0';
+           PIPE ROW (oneRecord);
+        end if;
+        --代理商佣金税金gx撤单
+        if oneRecord.ofield11='124900004420' then
+           oneRecord.ofield11 :='124900004499';
+           oneRecord.ofield13:=to_char(commision_tax);
+           oneRecord.ofield32:='0';
+           PIPE ROW (oneRecord);
+        end if;
+    end loop;
+    close dataCursor;
+  end loop;
+  end loop;
+  sDefine(1) :='
+    select to_char(nvl(certificate_type,''0'')) certificate_type,
+       a.region_id so_region_code,
+       b.county_id so_county_code,
+       a.org_id so_org_name,
+       ''0'' is_region_code,
+       ''0'' is_county_code,
+       ''0'' is_org_name,
+       b.org_role_type_id org_role_type_id,
+       a.op_id op_id,
+       a.billing_cycle_id billing_cycle_id,
+       a.business_id business_id,
+       decode(a.dtl_type, 80998, ''异地'', ''本地'') judge,
+       a.balance / 100 cash_total,
+       0 paid_total,
+       0 e1,
+       0 e2,
+       0 e3,
+       0 e4,
+       ''0%'' e5,
+       0 e6,
+       0 e7,
+       0 e8,
+       ''0%'' e9,
+       0 e10,
+       0 e11,
+       0 e12,
+       ''0%'' e13,
+       0 e14,
+       0 e15,
+       0 e16,
+       0 paid_prepay,
+       a.balance / 100 over_prepay,
+              a.BILL_ID,
+       REGION_ID,
+
+       peer_seq,
+       (select d.ITEM_ID
+          from base.bs_busi_balance d
+         where a.business_id = d.business_id) ITEM_ID,
+       1
+
+    from   ';
+
+  sDefine(3) :='
+    ,
+    sec.sec_organize'||sLink('sec')||' b
+    where 1=1 and a.org_id=b.organize_id
+    and a.fee_type not in (8,9)
+    and nvl(a.certificate_type,''0'') in (''0'',''1'',''6'',''9'',''2'',''Z'')
+    and a.business_id in (500014001010,500014001020,120000008939,120000008940,120000012097,120000012098,120000012099)
+    --and a.business_id in (500014001010,500014001020)
+    and a.dtl_type in (80998,1,2,27000121)
+    --and a.dtl_type in (80998)
+   and a.op_id not in( select distinct op_id from rpt.stat_filter_op where report_no=83583 and state=1 )
+  ';
+
+  --sAnd(1) := stat_common_newcrm.get_date_str(' and a.order_date >= ',sInput(1));
+  --sAnd(2) := stat_common_newcrm.get_date_str(' and a.order_date <= ',sInput(2));
+  sAnd(1) := stat_common_newcrm.get_date_str(' and a.create_date >= ',sInput(1));
+  sAnd(2) := stat_common_newcrm.get_date_str(' and a.create_date <= ',sInput(2));
+  sAnd(3) := stat_common_newcrm.get_number_str('and a.region_id in',sInput(3));
+  sAnd(4) := stat_common_newcrm.get_number_str('and b.county_id in',sInput(4));
+  sAnd(5) := stat_common_newcrm.get_number_str('and a.org_id in',sInput(5));
+  sAnd(6) := stat_common_newcrm.get_number_str('and a.op_id in',sInput(6));
+  sAnd(7) := stat_common_newcrm.get_number_str('and b.ORG_ROLE_TYPE_ID in',sInput(7));
+  sAnd(8) := stat_common_newcrm.get_number_str('and a.business_id in',sInput(8));
+  sDefine(4) := '' ||sAnd(1)||sAnd(2)||sAnd(3)||sAnd(4)||sAnd(5)||sAnd(6)||sAnd(7)||sAnd(8);
+  sRegion := stat_common_newcrm.get_region_center(sInput( 3));
+  sMonth := stat_common_newcrm.get_month_str(sInput(1),sInput(2));
+  for i in 1..sRegion.count loop
+  for j in 1..sMonth.count loop
+  sDefine(2) := 'ams'||trunc(sRegion(i)/1000)||'.am_received_fee_'||mod(sRegion(i),1000)||'_'||sMonth(j)||sLink('ams'||trunc(sRegion(i)/1000))||' a ';
+  sSql(3) := '' ||headstr||sDefine(1)||sDefine(2)||sDefine(3)||sDefine(4)||groupbystr ;
+  open dataCursor for sSql(3);
+    loop
+      fetch dataCursor into oneRecord;
+  commit;
+        exit when dataCursor% notfound;
+        PIPE ROW (oneRecord);
+    end loop;
+    close dataCursor;
+  end loop;
+  end loop;
+ ---add by yangkw 201811 直销员充值
+
+ sDefine(1) :='
+    select nvl(a.certificate_type, ''0'') certificate_type,
+       a.opt_region_id so_region_code,
+       a.county_code so_county_code,
+       a.org_id so_org_name,
+       (select t.parent_district_id from base.bs_district'||sLink('base')||' t where t.district_type_id=3 and  t.district_id =a.agent_acct_county_code) is_region_code,
+       a.agent_acct_county_code is_county_code,
+       a.agent_org_id is_org_name,
+       b.org_role_type_id org_role_type_id,
+       a.op_id op_id,
+       a.billing_cycle_id billing_cycle_id,
+       a.business_id business_id,
+       decode((select parent_district_id - a.opt_region_id from base.bs_district'||sLink('base')||' where district_id = a.agent_acct_county_code),0,''本地'',''异地'') judge,
+       a.amount/ 100 cash_total,
+       0 paid_total,
+        ''0%'' e1,
+       0 e2,
+       0 e3,
+       0 e4,
+       ''0%'' e5,
+       0 e6,
+       0 e7,
+       0 e8,
+       ''0%'' e9,
+       0 e10,
+       0 e11,
+       0 e12,
+       ''0%'' e13,
+       0 e14,
+       nvl(a.commision,0)/100 e15,
+       nvl(a.commision_tax,0)/100 e16,
+       0 paid_prepay,
+       a.amount / 100 over_prepay,
+              a.BILL_ID,
+       REGION_ID,
+
+       peer_seq,
+       (select d.ITEM_ID
+          from base.bs_busi_balance d
+         where a.business_id = d.business_id) ITEM_ID,
+       1
+
+    from   ';
+
+  sDefine(3) :='
+    ,
+    sec.sec_organize'||sLink('sec')||' b
+ where a.business_id in (120000004458, 120000004459)
+ and a.org_id = b.organize_id
+   and a.op_id not in( select distinct op_id from rpt.stat_filter_op where report_no=83583 and state=1 )
+  ';
+  sAnd(1) := stat_common_newcrm.get_date_str(' and a.pay_date >= ',sInput(1));
+  sAnd(2) := stat_common_newcrm.get_date_str(' and a.pay_date <= ',sInput(2));
+  sAnd(3) := stat_common_newcrm.get_number_str('and a.opt_region_id in',sInput(3));
+  sAnd(4) := stat_common_newcrm.get_number_str('and a.county_code in',sInput(4));
+  sAnd(5) := stat_common_newcrm.get_number_str('and a.org_id in',sInput(5));
+  sAnd(6) := stat_common_newcrm.get_number_str('and a.op_id in',sInput(6));
+  sAnd(7) := stat_common_newcrm.get_number_str('and b.org_role_type_id in',sInput(7));
+  sAnd(8) := stat_common_newcrm.get_number_str('and a.business_id in',sInput(8));
+  sDefine(4) := '' ||sAnd(1)||sAnd(2)||sAnd(3)||sAnd(4)||sAnd(5)||sAnd(6)||sAnd(7)||sAnd(8);
+  --sRegion := stat_common_newcrm.get_region_center(sInput( 3));
+  sRegion := stat_common_newcrm.get_all_region_center(3);
+  sMonth := stat_common_newcrm.get_month_str(sInput(1),sInput(2));
+  if to_date(substr(sInput(2),1,8),'yyyymmdd')>=to_date('20180110','yyyymmdd') then
+  for i in 1..sRegion.count loop
+  for j in 1..sMonth.count loop
+  sDefine(2) := 'ams'||trunc(sRegion(i)/1000)||'.AM_CMOP_PAYMENT_'||mod(sRegion(i),1000)||'_'||sMonth(j)||sLink('ams'||trunc(sRegion(i)/1000))||' a ';
+  sSql(4) := '' ||headstr||sDefine(1)||sDefine(2)||sDefine(3)||sDefine(4)||groupbystr ;
+  open dataCursor for sSql(4);
+    loop
+      fetch dataCursor into oneRecord;
+  commit;
+        exit when dataCursor% notfound;
+        PIPE ROW (oneRecord);
+    end loop;
+    close dataCursor;
+  end loop;
+  end loop;
+  end if;
+---end 201811 直销员充值
+
+
+  stat_common_newcrm.end_report(sSql, 83583,startDate,sTemp);
+  return;
+  exception
+    when others then
+      stat_common_newcrm.end_report(sSql, 83583,startDate,sTemp);
+      raise;
+  end;
+
+end stat_83583_newcrm;

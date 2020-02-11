@@ -49,6 +49,20 @@ public class SystemController {
     public  String Menu(){
         return "system/menu/menuManager";
     }
+    /*跳转到dept管理界面*/
+    @GetMapping("/deptManager")
+    public String godept() {
 
-
+        return "system/dept/deptManager";
+    }
+    /*跳转到emp管理界面*/
+    @GetMapping("/empManager")
+    public String goemp() {
+        return "system/emp/empManager";
+    }
+    /*跳转到emp管理界面*/
+    @GetMapping("/providerManager")
+    public String gosupplier() {
+        return "system/provider/providerManager";
+    }
 }

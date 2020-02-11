@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mydesign.mycomputerscm.mapper.MenuMapper">
+
+
+    <select id="selectEmp" resultType="com.mydesign.mycomputerscm.domain.SysUser">
+		select distinct m.menu_id, m.parent_id, m.menu_name , m.perms ,m.remark , m.sortOrder,m.action,m.menu_type
+		from sys_menu m
+			 left join sys_rolemenu rm on m.menu_id = rm.menu_id
+			 left join sys_roleuser ur on rm.role_id = ur.role_id
+			 left join sys_role ro on ur.role_id = ro.role_id
+		where ur.user_id =#{user_id} and m.menu_type='menu'
+		order by m.sortOrder
+	</select>
+
+
+</mapper>

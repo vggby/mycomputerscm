@@ -2,6 +2,7 @@ package com.mydesign.mycomputerscm.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mydesign.mycomputerscm.Querydomain.queryRole;
 import com.mydesign.mycomputerscm.domain.Role;
 import com.mydesign.mycomputerscm.mapper.RoleMapper;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
-public class RoleServiceImpl implements RoleService{
+public class RoleServiceImpl  extends ServiceImpl<RoleMapper, Role> implements RoleService {
     @Autowired
     private RoleMapper RoleManaRoleMapper;
     @Override
@@ -59,23 +60,18 @@ public class RoleServiceImpl implements RoleService{
         int save = RoleManaRoleMapper.update(role,roleLambdaQueryWrapper);
         return save;
     }
-
-
     @Override
-
     public void deleteRole (String roleid ){
         LambdaQueryWrapper<Role> roleLambdaQueryWrapper = new LambdaQueryWrapper<>();
         roleLambdaQueryWrapper.eq(Role::getRoleId,roleid);
         RoleManaRoleMapper.delete(roleLambdaQueryWrapper);
     }
-
     @Override
     public Role findAllByroleid(String roleid) {
         LambdaQueryWrapper<Role> roleLambdaQueryWrapper = new LambdaQueryWrapper<>();
         roleLambdaQueryWrapper.eq(Role::getRoleId,roleid);
         return RoleManaRoleMapper.selectOne(roleLambdaQueryWrapper);
     }
-
     @Override
     public List<String> queryRolePermissionIdsByRid(String roleId) {
 
@@ -93,6 +89,11 @@ public class RoleServiceImpl implements RoleService{
                 RoleManaRoleMapper.saveRoleMenu(roleId,pid);
             }
         }
+    }
+
+    @Override
+    public List<String> queryUserRoleIdsByUid(String id) {
+        return RoleManaRoleMapper.queryUserRoleIdsByUid(id);
     }
 
 }

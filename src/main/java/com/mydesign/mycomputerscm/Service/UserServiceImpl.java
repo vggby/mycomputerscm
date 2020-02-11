@@ -1,7 +1,9 @@
 package com.mydesign.mycomputerscm.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mydesign.mycomputerscm.domain.SysUser;
+import com.mydesign.mycomputerscm.mapper.RoleMapper;
 import com.mydesign.mycomputerscm.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,11 +11,12 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl   extends ServiceImpl<UserMapper, SysUser> implements UserService {
 
     @Autowired
     private UserMapper usermapper;
-
+    @Autowired
+    private RoleMapper roleMapper;
     @Override
     public int SaveUser(SysUser user) {
         user.setPassword(user.getPassword());
@@ -27,6 +30,17 @@ public class UserServiceImpl implements UserService {
         LambdaQueryWrapper<SysUser> sysUserLambdaQueryWrapper = new LambdaQueryWrapper<>();
         sysUserLambdaQueryWrapper.eq(SysUser::getUsername,username);
         return usermapper.selectOne(sysUserLambdaQueryWrapper);
+    }
+
+    @Override
+    public void saveUserRole(String uid, String[] ids) {
+        //根据用户ID删除sys_role_user里面的数据
+        this.roleMapper.deleteRoleUserByUid(uid);
+        if(null!=ids&&ids.length>0) {
+            for (String rid : ids) {
+                this.roleMapper.insertUserRole(uid,rid);
+            }
+        }
     }
 
 }

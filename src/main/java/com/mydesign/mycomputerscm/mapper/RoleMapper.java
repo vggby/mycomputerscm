@@ -24,4 +24,14 @@ public interface RoleMapper extends BaseMapper<Role> {
      *
      */
     void saveRoleMenu(@Param("role_id")String rid, @Param("menu_id")String pid);
+    /**
+     * 查询当前用户拥有的角色ID集合
+     * @param id
+     * @return
+     */
+    List<String> queryUserRoleIdsByUid(String id);
+
+    void deleteRoleUserByUid(String uid);
+
+    void insertUserRole(String uid, String rid);
 }

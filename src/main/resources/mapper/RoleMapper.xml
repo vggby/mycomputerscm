@@ -8,8 +8,18 @@
 	<delete id="deleteRoleMenuByRid">
 		delete from sys_rolemenu where role_id=#{value}
 	</delete>
-	<!-- 保存角色和菜单权限之间的关系 -->
+    <delete id="deleteRoleUserByUid">
+		delete from sys_roleuser where user_id =#{id}
+	</delete>
+    <!-- 保存角色和菜单权限之间的关系 -->
 	<insert id="saveRoleMenu">
 		insert into sys_rolemenu(role_id,menu_id) values(#{role_id},#{menu_id})
 	</insert>
+	<insert id="insertUserRole">
+		insert into sys_roleuser(user_id,role_id) values(#{uid},#{rid})
+	</insert>
+	<!-- 查询当前用户拥有的角色ID集合 -->
+	<select id="queryUserRoleIdsByUid" resultType="java.lang.String">
+		select role_id from sys_roleuser where user_id=#{value}
+	</select>
 </mapper>

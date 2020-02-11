@@ -98,7 +98,8 @@ public class MenuController {
             public DataGridView loadMenuManagerLeftTreeJson(MenuVo permissionVo) {
                 LambdaQueryWrapper<Menu> queryWrapper=new LambdaQueryWrapper<>();
                 queryWrapper.eq(Menu::getMenuType, "menu");
-                List<Menu> list = menuService.list(queryWrapper);
+                List<Menu> list = menuService.list(queryWrapper
+                );
                 List<TreeNode> treeNodes=new ArrayList<>();
                 for (Menu menu : list) {
                         treeNodes.add(new TreeNode(menu.getMenuId(), menu.getParentId(), menu.getMenuName(),true));

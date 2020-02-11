@@ -12,7 +12,6 @@ import lombok.Data;
 
 @TableName( value="sys_users")
 public class SysUser {
-
     @TableId(type= IdType.UUID ,value="user_id")
     private String userid;
     @TableField
@@ -23,5 +22,17 @@ public class SysUser {
     private String remark;
     @TableField
     private Integer status;
+
+    @TableField("emp_name")
+    private String empName;
+    @TableField("emp_phone")
+    private String empPhone;
+    @TableField("emp_type")
+    private Integer empType;
+    @TableField("did")
+    private String did;
+
+    private transient   String deptname;
+
 
 }

@@ -20,7 +20,6 @@ public class LoginController {
     @ResponseBody
     public ResultInfo login(SysUser user) {
         ResultInfo resultInfo = new ResultInfo();
-
         // 从SecurityUtils里边创建一个 subject
         Subject subject = SecurityUtils.getSubject();
         // 在认证提交前准备 token（令牌）
