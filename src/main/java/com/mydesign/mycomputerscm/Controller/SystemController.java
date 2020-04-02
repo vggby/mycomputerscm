@@ -65,4 +65,28 @@ public class SystemController {
     public String gosupplier() {
         return "system/provider/providerManager";
     }
+    /*跳转到emp管理界面*/
+    @GetMapping("/customerManager")
+    public String gocustomer() {
+        return "system/customer/customerManager";
+    }
+    /*跳转到入库管理界面*/
+    @GetMapping("/computerStorageManager")
+    public String gocomputerStorageManager() {
+        return "bus/computerstorage/computerStorageManager";
+    }
+    /*跳转到品牌管理界面*/
+    @GetMapping("/brandManager")
+    public String gobrandManager() {
+        return "system/brand/brandManager";
+    }
+    @GetMapping("/modelManager")
+    public String gomodelManager() {
+        return "system/model/modelManager";
+    }
+
+    @GetMapping("/computerReturnManager")
+    public String gocomputerReturnManager() {
+        return "bus/computerreturn/computerReturnManager";
+    }
 }
