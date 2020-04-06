@@ -3,6 +3,8 @@ package com.mydesign.mycomputerscm.Service.sto;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mydesign.mycomputerscm.domain.sto.StoComstock;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -13,4 +15,5 @@ import com.mydesign.mycomputerscm.domain.sto.StoComstock;
  */
 public interface IStoComstockService extends IService<StoComstock> {
 
+    List<StoComstock> selectstore();
 }

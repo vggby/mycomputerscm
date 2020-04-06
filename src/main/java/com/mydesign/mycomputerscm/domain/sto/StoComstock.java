@@ -1,5 +1,6 @@
 package com.mydesign.mycomputerscm.domain.sto;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -38,5 +39,6 @@ public class StoComstock implements Serializable {
     private Double lossamount;
 
     private String orderId;
-
+    @TableField(exist = false)
+    private String count;
 }

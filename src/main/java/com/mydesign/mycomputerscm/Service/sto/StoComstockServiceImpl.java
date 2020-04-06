@@ -6,6 +6,8 @@ import com.mydesign.mycomputerscm.domain.sto.StoComstock;
 import com.mydesign.mycomputerscm.mapper.sto.StoComstockMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务实现类
@@ -17,4 +19,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class StoComstockServiceImpl extends ServiceImpl<StoComstockMapper, StoComstock> implements IStoComstockService {
 
+    @Override
+    public List<StoComstock> selectstore() {
+        return null;
+    }
 }

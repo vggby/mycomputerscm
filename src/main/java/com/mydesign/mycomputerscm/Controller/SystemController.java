@@ -89,4 +89,12 @@ public class SystemController {
     public String gocomputerReturnManager() {
         return "bus/computerreturn/computerReturnManager";
     }
+    @GetMapping("/pcStoreManager")
+    public String gopcStoreManager() {
+        return "bus/store/pcStoreManager";
+    }
+
+
+
+
 }
