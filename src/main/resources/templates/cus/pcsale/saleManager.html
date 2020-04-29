@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>库存管理</title>
+        <title>电脑销售</title>
         <meta name="renderer" content="webkit">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -20,17 +20,17 @@
     <blockquote >
         <form action="" method="post" id="searchFrm" lay-filter="searchFrm" class="layui-form layui-form-pane">
             <div class="layui-form-item">
+
                 <div class="layui-inline">
                     <label class="layui-form-label">型号</label>
                     <div class="layui-input-inline">
                         <input type="text" name="computerType"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
-
-
                 <div class="layui-inline">
                     <div class="layui-input-block">
                         <button type="button" class="layui-btn" lay-submit="" lay-filter="doSearch"><span class="layui-icon layui-icon-search"></span>查询</button>
+
                     </div>
                 </div>
                 </div>
@@ -50,22 +50,63 @@
             </div>
         </script>
         <script type="text/html" id="barDemo"  style="display: none;">
-            <button type="button" lay-event="update" class="layui-btn layui-btn-sm"><span class="layui-icon layui-icon-edit"></span>查看</button>
-
+            <button type="button" lay-event="update" class="layui-btn layui-btn-sm"><span class="layui-icon layui-icon-edit"></span>销售</button>
+<!--
+            <button type="button" lay-event="delete" class="layui-btn layui-btn-sm layui-btn-danger"><span class="layui-icon layui-icon-delete"></span>报废</button>
+-->
         </script>
         <script th:src="@{../plugin/jquery/jquery.min.js}"></script>
         <script th:src="@{../layui/layui.all.js}" charset="utf-8"></script>
         <!-- 添加和修改的弹出层开始 -->
-        <div style="display: none;padding: 5px" id="addOrUpdateDiv">
-            <table class="layui-hide" id="StoreTable" lay-filter="StoreTable"></table>
-            <form action="" method="post" class="layui-form layui-form-pane" id="dataFrm" lay-filter="dataFrm">
-            </form>
-        </div>
+    <div style="display: none;padding: 5px" id="addOrUpdateDiv">
+        <form action="" method="post" class="layui-form layui-form-pane" id="dataFrm" lay-filter="dataFrm">
+            <div class="layui-form-item">
+                <label class="layui-form-label" >当前库存数量</label>
+            <div class="layui-input-inline">
+                <input type="text"  class="layui-input" ID="salecount" name="count" readonly="readonly">
+            </div>
+            </div>
+            <div class="layui-form-item">
+                <input type="hidden" name="id">
+                <label class="layui-form-label">客户</label>
+                <div class="layui-input-inline">
+                    <select name="customerId" id="customerid"   lay-filter="required">
+                        <option value="0"></option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">数量</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input"  id="number"  name="salenumber" lay-verify="numbernull|number" placeholder="请输入卖出的数量" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">销售价</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input"  name="price" lay-verify="number" placeholder="请输入卖出的价格" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">备注</label>
+                <div class="layui-input-block">
+                    <textarea  name="remark" class="layui-textarea"></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block" style="text-align: center;">
+                    <button type="button" class="layui-btn" lay-submit="" lay-filter="doSubmit" id="doSubmit" ><span class="layui-icon layui-icon-add-1"></span>提交</button>
+                    <button type="reset" class="layui-btn layui-btn-warm"><span class="layui-icon layui-icon-refresh-1"></span>重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
         <!-- 添加和修改的弹出层结束 -->
         <script th:inline="none">
             var table;
             var tableIns;
-            var StoreTable;
             layui.use(['jquery','form','table','layer'], function(){
                 var form=layui.form;
                  table=layui.table;
@@ -75,7 +116,7 @@
                     contentType: 'application/json'
                     ,method: 'post'
                     ,elem: '#test'
-                    ,url:'/store/loadStore'
+                    ,url:'/sale/loadStore'
                     ,groups: 1 //只显示 1 个连续页码
                     ,first: false //不显示首页
                     ,last: false //不显示尾页
@@ -86,50 +127,21 @@
                         ,icon: 'layui-icon-tips'
                     }]
                     ,title: '用户数据表'
-                    ,cols: [[
-                        {type: 'checkbox', fixed: 'left'}
-                        ,{field:'computerType', title:'型号', fixed: 'left', unresize: true, sort: true}
-                        ,{field:'count', title:'总数', }
-                         ,{field:'price', title:'单价', }
-                         ,{field:'lossamount', title:'报损价', }
-                        ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
+                     ,cols: [ [
 
-                    ]]
+                         {field:'computerType', title:'类型' }
+                         ,{field:'colour', title:'颜色' }
+                         ,{field:'config', title:'配置'  }
+                         ,{field:'providerId', title:'供应商ID'  }
+                         ,{field:'price', title:'单价'  }
+                         ,{field:'count', title:'数量'  }
+                         ,{field:'remark', title:'备注'  }
+
+                         ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:200}
+
+                     ] ]
                     ,page: true
 
-                });
-
-
-                StoreTable=table.render({
-                    elem: '#StoreTable'
-                    ,toolbar: '#IMEIToolBar' //开启头部工具栏，并为其绑定左侧模板
-                    ,title: '数据表'
-                    ,url:"/store/FindStore"
-                    ,method: "post"
-                    ,height:'full-280'
-                    ,page: true
-                    /*  ,method: 'post'*/
-                    ,cols: [ [
-                        {field:'imei', title:'IMEI' }
-                        ,{field:'computerType', title:'computerType' }
-                        ,{field:'colour', title:'colour' }
-                        ,{field:'config', title:'config'  }
-                        ,{field:'providerId', title:'providerId'  }
-                        ,{field:'entryDate', title:'entryDate'  }
-                        ,{field:'price', title:'price'  }
-                        ,{field:'lossamount', title:'lossamount' }
-                        ,{field:'orderId', title:'orderId'  }
-
-                    ] ]
-                    ,done: function(res, curr, count){ //处理删除某一页最后一条数据的BUG
-                        if(res.data.length==0&&curr!=1){
-                            IMEItableIns.reload({
-                                page:{
-                                    curr:(curr-1)
-                                }
-                            });
-                        }
-                    }
                 });
 
 
@@ -179,11 +191,11 @@
                         type:1,
                         content:$("#addOrUpdateDiv"),
                         area:['500px','400px'],
-                        title:'添加品牌',
+                        title:'报损',
                         success:function(){
                             $("#dataFrm")[0].reset();
                             $("#parentId").val("");
-                            url="/brand/addBrand";
+                            url="/store/baosun";
                            /* //初始化排序码
                             $.get("/menu/loadMenuMaxOrderNum",function(res){
                                 $("#sortOrder").val(res.value);
@@ -192,6 +204,18 @@
                         }
                     });
                 }
+                form.verify({
+                    numbernull: function(value){
+                        
+                        if(value<1){
+                            return '销售数量不能小于1';
+                        }
+
+                        if ($("#salecount").val()<value){
+                            return '销售数量不能大于库存';
+                        }
+                    }
+                });
                 //打开修改的弹出层
                 function openUpdateRoleLayer(data){
                     mainIndex=layer.open({
@@ -200,22 +224,39 @@
                         area:['1000px','500px'],
                         title:'修改部门',
                         success:function(){
-                            debugger;
-                            StoreTable.reload({
-                                where: { //设定异步数据接口的额外参数，任意设
-                                    computerType: data.computerType
-                                }
-                            });
-                            }
+                            $("#dataFrm")[0].reset();
+                            //装载新的数据
+                            form.val("dataFrm",data);
+                            url="/sale/pcsale";
+                            initProviderSelect();
+                            //禁用供应商和商品的下拉框
+                            $(".mydiv").show();
+
+                        }
+                    });
+                }
+
+//初始化添加和修改页面的下拉列表
+                function initProviderSelect(){
+
+                    $.post("/customer/loadAllCustomer",function(res){
+                        var data=res.data;
+                        var dom=$("#customerid");
+                        var html='<option value="0">请选择客户</option>'
+                        $.each(data,function(index,item){
+                            html+='<option value="'+item.id+'">'+item.customername+'</option>'
+                        });
+                        dom.html(html);
+
+                        form.render("select");
                     });
                 }
 
 
 
 
-
                 form.on("submit(doSubmit)",function(data){
-                    debugger;
+                    
                     $.post(url,data.field,function(res){
                         if(res.flag){
                             alert(res.errorMsg);
@@ -234,12 +275,12 @@
                 table.on('tool(test)', function(obj){
                     var data = obj.data;
                     //console.log(obj)
-                    debugger;
+                    
                     if(obj.event === 'del'){
                         layer.confirm('真的删除行么', function(index){
                             obj.del();
                             layer.close(index);
-                            debugger;
+                            
                             $.ajax({
                                 type : 'post',
                                 url:  "/brand/deleteBrand",
@@ -259,11 +300,26 @@
                         });
                     } else if(obj.event === 'update'){
                         openUpdateRoleLayer(data);
+                    }else if (obj.event === 'delete'){
+                        baosun(data);
                     }
 
 
                 });
+                function baosun(data){
+                    layer.confirm('你确定要报损吗?', {icon: 3, title:'提示'}, function(index){
+                        $.post("/store/baofei",{id:data.id},function(res){
+                            if(res.flag){
+                                tableIns.reload();
+                            }
+                            layer.msg(res.errorMsg);
+                        })
+                        layer.close(index);
+                    });
+                }
             });
+
+
         </script>
 
     </body>

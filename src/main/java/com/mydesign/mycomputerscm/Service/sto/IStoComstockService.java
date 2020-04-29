@@ -1,9 +1,12 @@
 package com.mydesign.mycomputerscm.Service.sto;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.mydesign.mycomputerscm.domain.sto.StoComstock;
-
-import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -15,5 +18,11 @@ import java.util.List;
  */
 public interface IStoComstockService extends IService<StoComstock> {
 
-    List<StoComstock> selectstore();
+/*
+    List<StoComstock> selectstore(StoreVo toComstock);
+*/
+    IPage<StoComstock> selectstore(IPage<StoComstock> page, @Param(Constants.WRAPPER) Wrapper<StoComstock> queryWrapper);
+
+    IPage<StoComstock> selectstoregroup(IPage<StoComstock> page, @Param(Constants.WRAPPER) LambdaQueryWrapper<StoComstock> queryWrapper);
+
 }

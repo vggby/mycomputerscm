@@ -26,39 +26,24 @@
     <form action="" method="post" id="searchFrm" lay-filter="searchFrm" class="layui-form layui-form-pane">
         <div class="layui-form-item">
             <div class="layui-inline">
-                <label class="layui-form-label">供应商</label>
+                <label class="layui-form-label">客户</label>
                 <div class="layui-input-inline">
-                    <select name="providerId" id="search_providerid">
-                        <option value="0">请选择供应商</option>
+                    <select name="customerId" id="search_providerid">
+                        <option value="0">请选择客户</option>
                     </select>
                 </div>
             </div>
 
 
             <div class="layui-inline">
-                <label class="layui-form-label">机型</label>
+                <label class="layui-form-label">订单号</label>
                 <div class="layui-input-inline">
-                    <select name="computerType" id="search_computerType">
-                        <option value="0">请选择机型</option>
-                    </select>
+                    <input type="text" class="layui-input"  name="orderId"   placeholder="">
                 </div>
             </div>
 
-            <div class="layui-inline">
-                <label class="layui-form-label">开始时间</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="startTime" readonly="readonly"  id="startTime" autocomplete="off" class="layui-input">
-                </div>
-            </div>
         </div>
-        <div class="layui-form-item">
-            <div class="layui-inline">
-                <label class="layui-form-label">结束时间</label>
-                <div class="layui-input-inline">
-                    <input type="text"  name="endTime" readonly="readonly"  id="endTime"  autocomplete="off" class="layui-input">
-                </div>
-            </div>
-        </div>
+
         <div class="layui-form-item">
             <div class="layui-input-block" style="text-align: center;">
                 <button type="button" class="layui-btn" lay-submit="" lay-filter="doSearch"><span class="layui-icon layui-icon-search"></span>查询</button>
@@ -83,15 +68,9 @@
 
 <!-- 数据表格结束 -->
 
-
-
-
 <!-- 添加和修改的弹出层开始 -->
 <div style="display: none;padding: 5px" id="addOrUpdateDiv">
-
-
     <div>
-
       <div>
           <table class="layui-hide" id="IMEITable" lay-filter="IMEITable"></table>
 
@@ -99,7 +78,6 @@
               <button type="button" lay-event="imeidelete" class="layui-btn layui-btn-sm layui-btn-danger"><span class="layui-icon layui-icon-delete"></span>删除</button>
           </div>
       </div>
-
      </div>
 
     <form action="" method="post" class="layui-form layui-form-pane" id="dataFrm" lay-filter="dataFrm">
@@ -167,7 +145,7 @@
         //加载 数据
         tableIns=table.render({
             elem: '#inportTable'
-            ,url:'/computerstorage/loadAllInport'
+            ,url:'/sale/loadSale'
             ,toolbar: '#inportToolBar' //开启头部工具栏，并为其绑定左侧模板
             ,title: '商品进货数据表'
             ,height:'full-280'
@@ -175,14 +153,14 @@
             ,method: 'post'
             ,cols: [ [
                 {field:'orderId', title:'订单号',align:'center' ,width:'80'}
-                ,{field:'providerId', title:'供应商Id',align:'center',width:'120'}
-                ,{field:'computerType', title:'机型',align:'center',width:'120'}
-                ,{field:'colour', title:'颜色',align:'center',width:'120'}
+                ,{field:'customer_id', title:'客户id',align:'center',width:'120'}
+                ,{field:'price', title:'单价',align:'center',width:'120'}
+                ,{field:'computer_type', title:'类型',align:'center',width:'120'}
+                ,{field:'salenumber', title:'数量',align:'center',width:'120'}
+                ,{field:'amount', title:'总价',align:'center',width:'100'}
+                ,{field:'colour', title:'颜色',align:'center',width:'100'}
                 ,{field:'config', title:'配置',align:'center',width:'120'}
-                ,{field:'price', title:'单价',align:'center',width:'100'}
-                ,{field:'number', title:'数量',align:'center',width:'100'}
-                ,{field:'entryDate', title:'入库时间',align:'center',width:'120'}
-                ,{field:'entryOp', title:'操作员',align:'center',width:'100'}
+                ,{field:'entry_op', title:'操作员',align:'center',width:'100'}
                 ,{field:'remark', title:'备注',align:'center',width:'100'}
                 ,{fixed: 'right', title:'操作', toolbar: '#inportRowBar',align:'center',width:'250'}
             ] ]
@@ -198,19 +176,17 @@
         });
 
 
+        //IMEItableIns
+        var tableData=new Array(); // 用于存放表格数据
 
         IMEItableIns=table.render({
             elem: '#IMEITable'
-          /*  ,url:'/IMEI/loadAllIMEI'*/
-
-          /*  ,data:tableData*/
+            ,data:tableData
             ,toolbar: '#IMEIToolBar' //开启头部工具栏，并为其绑定左侧模板
             ,title: '数据表'
             ,height:'full-280'
             ,page: true
-          /*  ,method: 'post'*/
             ,cols: [ [
-
                {field:'imei', title:'IMEI' ,width:'300'}
                ,{fixed: 'right', title:'操作', toolbar: '#IMEIRowBar',width:'300'}
             ] ]
@@ -239,27 +215,17 @@
 
 
         //加载查询条件供应商的下拉列表
-        $.post("/provider/loadAllProviderForSelect",function(res){
+        $.post("/customer/loadAllCustomer",function(res){
             var data=res.data;
             var dom=$("#search_providerid");
-            var html='<option value="0">请选择供应商</option>'
+            var html='<option value="0">请选择客户</option>'
             $.each(data,function(index,item){
-                html+='<option value="'+item.id+'">'+item.providername+'</option>'
+                html+='<option value="'+item.id+'">'+item.customername+'</option>'
             });
             dom.html(html);
             form.render("select");
         });
-        //iemi添加
-/*        form.on('submit(iemiadd)', function(data){
-            $.post("/IMEI/addIMEI",data.field,function(res){
 
-                if(res.flag){
-                    tableIns.reload();
-                }
-                layer.msg(res.errorMsg);
-            })
-            return false;
-        });*/
 
         //加载查询条件供应商的下拉列表
         $.post("/model/loadAllModelForSelect",function(res){
@@ -348,7 +314,7 @@
                 success:function(){
                     $("#dataFrm")[0].reset();
 
-                    url="/computerreturn/Outport";
+                    url="/sale/salereturn";
                     initProviderSelect();
                     initBrandSelect();
                     $(".mydiv").hide();
@@ -407,7 +373,7 @@
                     $("#dataFrm")[0].reset();
                     //装载新的数据
                     form.val("dataFrm",data);
-                    url="/computerreturn/Outport";
+                    url="/sale/salereturn";
                     initProviderSelect(data.providerId);
                     initBrandSelect(data.computerType);
                     //禁用供应商和商品的下拉框

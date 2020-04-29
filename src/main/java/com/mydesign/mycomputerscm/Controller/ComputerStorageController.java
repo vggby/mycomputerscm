@@ -44,6 +44,9 @@ public class ComputerStorageController {
         QueryWrapper<ComputerStorage> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(inportVo.getProviderId()!=null&&inportVo.getProviderId()!=0,"provider_id",inportVo.getProviderId());
         queryWrapper.like(StringUtils.isNotBlank(inportVo.getComputerType()), "computer_type", inportVo.getComputerType());
+
+        queryWrapper.like(StringUtils.isNotBlank(inportVo.getOrderId()),"order_id", inportVo.getOrderId());
+
         queryWrapper.ge(inportVo.getStartTime()!=null, "entry_date", inportVo.getStartTime());
         queryWrapper.le(inportVo.getEndTime()!=null, "entry_date", inportVo.getEndTime());
         computerstorageService.page(page, queryWrapper);

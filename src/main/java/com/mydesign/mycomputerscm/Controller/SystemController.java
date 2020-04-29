@@ -93,8 +93,61 @@ public class SystemController {
     public String gopcStoreManager() {
         return "bus/store/pcStoreManager";
     }
+    @GetMapping("/pcStoreScrapManager")
+    public String gopcStoreScrapManager() {
+        return "bus/store/pcStoreScrapManager";
+    }
+    @GetMapping("/pcStoreScrapSelect")
+    public String gopcStoreScrapSelect() {
+        return "bus/store/pcStoreScrapSelect";
+    }
+    @GetMapping("/pcsaleManager")
+    public String gopcsaleManager() {
+        return "cus/pcsale/saleManager";
+    }
+    @GetMapping("/pcSaleSelect")
+    public String gopcSaleSelect() {
+        return "cus/pcsaleselect/pcSaleSelect";
+    }
+    @GetMapping("/pcSaleReManager")
+    public String gopcSaleReManager() {
+        return "cus/pcsalere/pcSaleReManager";
+    }
+
+    @GetMapping("/PCInSelect")
+    public String gocomputerInSelect() {
+        return "bus/computerstorage/computerInSelect";
+    }
 
 
+    @GetMapping("/PCoutSelect")
+    public String goPCOutSelect() {
+        return "bus/computerstorage/computerOuSelect";
+    }
+    @GetMapping("/PcSaleSelect")
+    public String goPcSaleSelect() {
+        return "cus/pcsale/PcSaleSelect";
+    }
 
+    @GetMapping("/PcSaleReSelect")
+    public String goPcSaleReSelect() {
+        return "bus/pcsalere/pcSaleReSelect";
+    }
+
+    @GetMapping("/loginInfo")
+    public String gologinInfo() {
+        return "system/logininfo/logininfo";
+    }
+
+
+    @GetMapping("/ReportSelect")
+    public String goReportSelect() {
+        return "report/Report";
+    }
+
+    @GetMapping("/ReporttbSelect")
+    public String ReporttbSelect() {
+        return "report/Reporttu";
+    }
 
 }

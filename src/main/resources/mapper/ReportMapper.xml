@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mydesign.mycomputerscm.mapper.report.ReportMapper">
+
+
+    <select id="loadReport" resultType="com.mydesign.mycomputerscm.domain.report.Report">
+			SELECT
+			c.computer_type AS computer_type,
+			sum( c.salenumber ) AS salenumber,
+			c.price AS price,
+			sum(c.amount) AS amount,
+			s.price * sum( c.salenumber ) AS totalcost,
+			sum(c.amount)-s.price * sum( c.salenumber )  AS grossprofit
+		FROM
+			cus_sale AS c,
+			sto_comstock AS s
+		WHERE
+			c.entry_date BETWEEN '2020-04-23'
+			AND '2020-04-23'
+		GROUP BY day(c.entry_date),c.computer_type
+
+	</select>
+
+
+</mapper>

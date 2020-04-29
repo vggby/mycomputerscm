@@ -1,7 +1,6 @@
-package com.mydesign.mycomputerscm.domain;
+package com.mydesign.mycomputerscm.domain.cus;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -15,33 +14,44 @@ import java.util.Date;
  * </p>
  *
  * @author jobob
- * @since 2020-03-29
+ * @since 2020-04-19
  */
 @Data
 @Accessors(chain = true)
-public class BusComputerreturn implements Serializable {
-    @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+public class CusCustradedetail implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String computerType;
+    @TableId(value = "invoice_id", type = IdType.AUTO)
+    private Integer invoiceId;
 
-    private Integer providerId;
+    /**
+     * 客户id
+     */
+    private Integer customerId;
 
+    /**
+     * 销售 退货
+     */
+    private String tradetype;
+
+    /**
+     * 总数
+     */
     private Integer number;
 
     private Double price;
 
-    private Double amount;
+    private Date entryDate;
 
     private String entryOp;
 
-    private Date entryDate;
+    private Double amount;
 
     private String remark;
-    @TableField(value="order_id")
+
     private String orderId;
-    @TableField(exist=false)
-    private String providername;
+
+
+
 }

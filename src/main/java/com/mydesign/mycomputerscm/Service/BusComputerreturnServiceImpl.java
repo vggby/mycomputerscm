@@ -47,7 +47,8 @@ public class BusComputerreturnServiceImpl extends ServiceImpl<BusComputerreturnM
         BeanUtils.copyProperties(inportVo,stoComstock);
         BeanUtils.copyProperties(inportVo,suptradedetail);
         suptradedetail.setTradetype("退货");
-
+        //加入明细表
+        busSuptradedetailMapper.insert(suptradedetail);
         computerreturnMapper.insert(computerreturn);
         for (String i:
                 imeis) {
@@ -55,14 +56,16 @@ public class BusComputerreturnServiceImpl extends ServiceImpl<BusComputerreturnM
                 imei.setImei(i);
                 stoComstock.setImei(i);
                 imei.setOrderId(inportVo.getOrderId());
-                LambdaQueryWrapper<IMEI> iMEIWrapper = new LambdaQueryWrapper<>();
-                iMEIWrapper.eq(IMEI::getImei,i);
+
                 LambdaQueryWrapper<StoComstock> Wrapper = new LambdaQueryWrapper<>();
                 Wrapper.eq(StoComstock::getImei,i);
                 stoComstockMapper.delete(Wrapper);
-                iMEIMapper.delete(iMEIWrapper);
-                //加入明细表
-                busSuptradedetailMapper.insert(suptradedetail);
+
+
+               /* LambdaQueryWrapper<IMEI> iMEIWrapper = new LambdaQueryWrapper<>();
+                iMEIWrapper.eq(IMEI::getImei,i);
+                iMEIMapper.delete(iMEIWrapper);*/
+
             }
         }
 

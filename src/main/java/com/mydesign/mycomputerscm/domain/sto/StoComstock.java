@@ -1,6 +1,8 @@
 package com.mydesign.mycomputerscm.domain.sto;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -21,6 +23,8 @@ import java.util.Date;
 public class StoComstock implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
 
     private String imei;
 
@@ -41,4 +45,6 @@ public class StoComstock implements Serializable {
     private String orderId;
     @TableField(exist = false)
     private String count;
+
+    private String remark;
 }

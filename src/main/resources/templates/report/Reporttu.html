@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>报表图</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+        <link rel="stylesheet" th:href="@{../layui/css/layui.css}" media="all" />
+        <link rel="stylesheet" th:href="@{../layui_ext/dtree/dtree.css}" media="all" />
+        <link rel="stylesheet" th:href="@{../layui_ext/dtree/font/dtreefont.css}"  media="all" />
+    </head>
+
+
+    <body class="childrenBody">
+    <!-- 查询条件开始 -->
+    <fieldset class="layui-elem-field layui-field-title" >
+        <legend>查询条件</legend>
+    </fieldset>
+    <blockquote >
+        <form action="" method="post" id="searchFrm" lay-filter="searchFrm" class="layui-form layui-form-pane">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">登陆名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="loginname"  autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">登陆地址</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="loginip"    autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">开始时间</label>
+                    <div class="layui-input-inline">
+                        <input type="tel" name="startTime" id="startTime" readonly="readonly" placeholder="yyyy-MM-dd HH:mm:ss" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">结束时间</label>
+                    <div class="layui-input-inline">
+                        <input type="tel" name="endTime"  id="endTime"  readonly="readonly" placeholder="yyyy-MM-dd HH:mm:ss" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block" style="text-align: center;">
+                    <button type="button" class="layui-btn" lay-submit="" lay-filter="doSearch"><span class="layui-icon layui-icon-search"></span>查询</button>
+                    <button type="reset" class="layui-btn layui-btn-warm"><span class="layui-icon layui-icon-refresh-1"></span>重置</button>
+                </div>
+            </div>
+        </form>
+    </blockquote>
+    <!-- 查询条件结束-->
+    <div class="weadmin-body">
+        <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+        <div id="main" style="width: 100%;height:400px;"></div>
+    </div>
+
+    <script th:src="@{../js/echarts/echarts.min.js}"></script>
+    <script th:src="@{../plugin/jquery/jquery.min.js}"></script>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+        // 指定图表的配置项和数据
+        var labelRight = {
+            normal: {
+                position: 'right'
+            }
+        };
+        $(function () {
+            getData4();
+        });
+        function  getData4() {
+            $.ajax({
+                type: 'post',
+                dataType: 'text'
+                ,url:'/report/loadReporttu'
+                ,success: function (data) {
+                    var data = eval('(' + data + ')');
+                    var data1 = new Array();
+                    var data2 = new Array();
+                    for(var i=0; i < data.length; i++){
+                        data1[i] = data[i].computerType;
+                        data2[i] = data[i].salenumber;
+                    }
+                    //alert(JSON.stringify(data));
+                    var myChart = echarts.init(document.getElementById('main'));
+
+                    // 指定图表的配置项和数据
+                    option = {
+                        tooltip: {
+                            trigger: 'axis',
+                            formatter: "name : {b} <br/>grade: {c} "
+                        },
+                        grid: {
+                            left: '3%',
+                            right: '4%',
+                            bottom: '3%',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: data1
+                        },
+                        yAxis: {
+                            type: 'value'
+                        },
+                        series: [{
+                            name: '某站点用户消费积分',
+                            type: 'bar',
+                            smooth: true,
+                            barCategoryGap: 25,
+                            lineStyle: {
+                                normal: {
+                                    width: 3,
+                                    shadowColor: 'rgba(0,0,0,0.4)',
+                                    shadowBlur: 10,
+                                    shadowOffsetY: 10
+                                }
+                            },
+                            data: data2,
+                        }]
+                    };
+                    // 使用刚指定的配置项和数据显示图表。
+                    myChart.setOption(option);
+                }
+            });
+        }
+    </script>
+
+
+    </body>
+</html>

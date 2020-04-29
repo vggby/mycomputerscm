@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>电脑入库管理</title>
+    <title>电脑销售单单查询</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta http-equiv="Access-Control-Allow-Origin" content="*">
@@ -26,45 +26,21 @@
     <form action="" method="post" id="searchFrm" lay-filter="searchFrm" class="layui-form layui-form-pane">
         <div class="layui-form-item">
             <div class="layui-inline">
-                <label class="layui-form-label">供应商</label>
+                <label class="layui-form-label">订单号</label>
                 <div class="layui-input-inline">
-                    <select name="providerId" id="search_providerid">
-                        <option value="0">请选择供应商</option>
-                    </select>
+                    <input type="text" name="orderId"  autocomplete="off" class="layui-input">
                 </div>
             </div>
-
-
-            <div class="layui-inline">
-                <label class="layui-form-label">机型</label>
-                <div class="layui-input-inline">
-                    <select name="computerType" id="search_computerType">
-                        <option value="0">请选择机型</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="layui-inline">
-                <label class="layui-form-label">开始时间</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="startTime" readonly="readonly"  id="startTime" autocomplete="off" class="layui-input">
+            <div class="layui-form-item">
+                <div class="layui-input-block" style="text-align: center;">
+                    <button type="button" class="layui-btn" lay-submit="" lay-filter="doSearch"><span class="layui-icon layui-icon-search"></span>查询</button>
+                    <button type="reset" class="layui-btn layui-btn-warm"><span class="layui-icon layui-icon-refresh-1"></span>重置</button>
                 </div>
             </div>
         </div>
-        <div class="layui-form-item">
-            <div class="layui-inline">
-                <label class="layui-form-label">结束时间</label>
-                <div class="layui-input-inline">
-                    <input type="text"  name="endTime" readonly="readonly"  id="endTime"  autocomplete="off" class="layui-input">
-                </div>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <div class="layui-input-block" style="text-align: center;">
-                <button type="button" class="layui-btn" lay-submit="" lay-filter="doSearch"><span class="layui-icon layui-icon-search"></span>查询</button>
-                <button type="reset" class="layui-btn layui-btn-warm"><span class="layui-icon layui-icon-refresh-1"></span>重置</button>
-            </div>
-        </div>
+
+
+
     </form>
 </blockquote>
 <!-- 查询条件结束-->
@@ -74,12 +50,10 @@
 <div>
     <table class="layui-hide" id="inportTable" lay-filter="inportTable"></table>
     <div id="inportToolBar" style="display: none;">
-        <button type="button" lay-event="add" class="layui-btn layui-btn-sm"><span class="layui-icon layui-icon-add-1"></span>添加商品入库</button>
     </div>
 
     <div id="inportRowBar" style="display: none;">
-        <button type="button" lay-event="update" class="layui-btn layui-btn-sm"><span class="layui-icon layui-icon-edit"></span>更新</button>
-        <button type="button" lay-event="delete" class="layui-btn layui-btn-sm layui-btn-danger"><span class="layui-icon layui-icon-delete"></span>删除</button>
+        <button type="button" lay-event="delete" class="layui-btn layui-btn-sm layui-btn-danger"><span class="layui-icon layui-icon-delete"></span>打印</button>
     </div>
 </div>
 
@@ -190,35 +164,9 @@
 <!-- 添加和修改的弹出层结束 -->
 
 
-<!-- 退货的弹出层  开始 -->
-<div id="backGoodsDiv" style="display: none;padding: 5px">
-    <form action="" method="post" class="layui-form layui-form-pane" id="dataBackFrm" lay-filter="dataBackFrm">
-        <div class="layui-form-item">
-            <label class="layui-form-label">退货数量</label>
-            <div class="layui-input-block">
-                <input type="hidden" name="id"> <!-- 进货单ID -->
-                <input type="hidden" name="currentnumber" id="currentnumber"> <!-- 当前进货单的数量 -->
-                <input type="text" class="layui-input"  name="number" lay-verify="required|checknumber" placeholder="请输入退货数量">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">退货备注</label>
-            <div class="layui-input-block">
-                <textarea  name="remark" class="layui-textarea"></textarea>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <div class="layui-input-block" style="text-align: center;">
-                <button type="button" class="layui-btn" lay-submit="" lay-filter="doBackSubmit" id="doBackSubmit" ><span class="layui-icon layui-icon-add-1"></span>提交</button>
-                <button type="reset" class="layui-btn layui-btn-warm"><span class="layui-icon layui-icon-refresh-1"></span>重置</button>
-            </div>
-        </div>
-    </form>
-</div>
-<!-- 退货的弹出层  结束 -->
-
-
 <script type="text/javascript" th:src="@{../layui/layui.js}"  ></script>
+<script type="text/javascript" th:src="@{../layui/LodopFuncs.js}"  ></script>
+
 <script type="text/javascript">
     var tableIns;
     var IMEItableIns;
@@ -241,7 +189,7 @@
         //加载 数据
         tableIns=table.render({
             elem: '#inportTable'
-            ,url:'/computerstorage/loadAllInport'
+            ,url:'/sale/loadSale'
             ,toolbar: '#inportToolBar' //开启头部工具栏，并为其绑定左侧模板
             ,title: '商品进货数据表'
             ,height:'full-280'
@@ -249,12 +197,12 @@
             ,method: 'post'
             ,cols: [ [
                 {field:'orderId', title:'订单号',align:'center' ,width:'80'}
-                ,{field:'providername', title:'供应商',align:'center',width:'120'}
+                ,{field:'customerId', title:'客户Id',align:'center',width:'120'}
                 ,{field:'computerType', title:'机型',align:'center',width:'120'}
                 ,{field:'colour', title:'颜色',align:'center',width:'120'}
                 ,{field:'config', title:'配置',align:'center',width:'120'}
                 ,{field:'price', title:'单价',align:'center',width:'100'}
-                ,{field:'number', title:'数量',align:'center',width:'100'}
+                ,{field:'salenumber', title:'数量',align:'center',width:'100'}
                 ,{field:'entryDate', title:'入库时间',align:'center',width:'120'}
                 ,{field:'entryOp', title:'操作员',align:'center',width:'100'}
                 ,{field:'remark', title:'备注',align:'center',width:'100'}
@@ -272,44 +220,8 @@
         });
 
 
-        //IMEItableIns
-        var tableData=new Array(); // 用于存放表格数据
-       /* $.ajax({
-            url: "/IMEI/loadAllIMEI"
-            ,type:"post"
-            ,async:false
-            ,dataType:"json"
-            , success: function(result){
 
-                tableData=result.data;
-                console.log(result);
-            }
-        });*/
-        IMEItableIns=table.render({
-            elem: '#IMEITable'
-          /*  ,url:'/IMEI/loadAllIMEI'*/
 
-            ,data:tableData
-            ,toolbar: '#IMEIToolBar' //开启头部工具栏，并为其绑定左侧模板
-            ,title: '数据表'
-            ,height:'full-280'
-            ,page: true
-          /*  ,method: 'post'*/
-            ,cols: [ [
-
-               {field:'imei', title:'IMEI' ,width:'300'}
-               ,{fixed: 'right', title:'操作', toolbar: '#IMEIRowBar',width:'300'}
-            ] ]
-            ,done: function(res, curr, count){ //处理删除某一页最后一条数据的BUG
-                if(res.data.length==0&&curr!=1){
-                    IMEItableIns.reload({
-                        page:{
-                            curr:(curr-1)
-                        }
-                    });
-                }
-            }
-        });
 //点击加号按钮时，新添一行
         $("#iemiadd").click(function(){
             var oldData = table.cache["IMEITable"];
@@ -335,17 +247,6 @@
             dom.html(html);
             form.render("select");
         });
-        //iemi添加
-/*        form.on('submit(iemiadd)', function(data){
-            $.post("/IMEI/addIMEI",data.field,function(res){
-
-                if(res.flag){
-                    tableIns.reload();
-                }
-                layer.msg(res.errorMsg);
-            })
-            return false;
-        });*/
 
         //加载查询条件供应商的下拉列表
         $.post("/model/loadAllModelForSelect",function(res){
@@ -442,88 +343,9 @@
             });
         }
 
-        //初始化添加和修改页面的下拉列表
-        function initProviderSelect(providerid){
-
-            $.post("/provider/loadAllProviderForSelect",function(res){
-                var data=res.data;
-                var dom=$("#providerid");
-                var html='<option value="0">请选择供应商</option>'
-                $.each(data,function(index,item){
-                    html+='<option value="'+item.id+'">'+item.providername+'</option>'
-                });
-                dom.html(html);
-                //如果providerid有值就反选
-                if(providerid!=undefined){
-                    dom.val(providerid);
-                }
-                form.render("select");
-            });
-        }
 
 
-        //加载品牌下拉列表
-        function initBrandSelect(computerType){
-            $.post("/model/loadAllModelForSelect",function(res){
-                var data=res.data;
-                var dom=$("#computerTypeid");
-                var html='<option value="0">请选择机型</option>'
-                $.each(data,function(index,item){
-                    html+='<option value="'+item.modelname+'">'+item.modelname+'</option>'
-                });
-                dom.html(html);
-                //computerType
-                if(computerType!=undefined){
-                    dom.val(computerType);
-                }
-                form.render("select");
-            });
-        }
 
-
-        //打开修改的弹出层
-        function openUpdateInportLayer(data){
-            findIMEI(data);
-            mainIndex=layer.open({
-                type:1,
-                content:$("#addOrUpdateDiv"),
-                area:['800px','600px'],
-                title:'修改商品进货',
-                success:function(){
-                    $("#dataFrm")[0].reset();
-                    //装载新的数据
-                    form.val("dataFrm",data);
-                    url="/computerstorage/updateInport";
-                    initProviderSelect(data.providerId);
-                    initBrandSelect(data.computerType);
-                    //禁用供应商和商品的下拉框
-                    $(".mydiv").show();
-
-                }
-            });
-        }
-
-
-        function findIMEI(data){
-            debugger;
-             $.ajax({
-            url: "/store/loadAllIMEI"
-            ,type:"post"
-                 ,data:{
-                "orderId":data.orderId
-                 }
-            ,async:false
-            ,dataType:"json"
-            , success: function(result){
-                tableData=result.data;
-                     table.reload('IMEITable',{
-                         data : tableData
-                     });
-                console.log(result);
-            }
-        });
-
-        }
 
         form.on("submit(doSubmit)",function(data){
             var oldData = table.cache["IMEITable"];
@@ -559,55 +381,181 @@
 
             return false;
         });
-        //删除
+        //打印出库单
         function deleteInport(data){
-            layer.confirm('你确定要删除这个商品进货吗?', {icon: 3, title:'提示'}, function(index){
-                $.post("/computerstorage/deleteInport",{id:data.id},function(res){
-                        if(res.flag){
-                        tableIns.reload();
-                    }
-                    layer.msg(res.errorMsg);
-                })
-                layer.close(index);
-            });
-        }
+            var LODOP = getLodop();
+            var rowMoveDown = 186;
+            var lineMoveDown = 176;
+            var rowHeight = 30;
+            var lineHeight = 30;
+            var x = 0;
+            var y = 0;
+            var list = 0;
+            var i=0;
+            //纸张大小
+            LODOP.PRINT_INITA(2,0,1000,600,"");
 
-        //打开退货的弹出层
-        function back(data){
-            mainIndex=layer.open({
-                type:1,
-                content:$("#backGoodsDiv"),
-                area:['800px','500px'],
-                title:'商品退货',
-                success:function(){
-                    $("#dataBackFrm")[0].reset();
-                    //装载新的数据
-                    form.val("dataBackFrm",{id:data.id,currentnumber:data.number});
-                }
-            });
-        }
+            //单名称
+            LODOP.ADD_PRINT_TEXT(20,45,820,35,"入库单");
+            LODOP.SET_PRINT_STYLEA(0,"FontSize",16);
+            LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+            LODOP.SET_PRINT_STYLEA(0,"Bold",1);
 
-        //自定义验证规则
-        form.verify({
-            checknumber: function(value){
-                var currentnumber=parseInt($("#currentnumber").val());
-                if(parseInt(value)>currentnumber||parseInt(value)<1){
-                    return '退货数量只能在【0】-【'+currentnumber+"】数量之间";
-                }
-            }
-        });
+            //商户标签
+            LODOP.ADD_PRINT_TEXT(58,45,120,20,"入库客户：");
+            LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+            LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+            //--动态值
+            LODOP.ADD_PRINT_TEXT(59,164,250,20,data.providerId);
+            LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+            LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
 
-        //退货提交
-        form.on("submit(doBackSubmit)",function(data){
-            $.post("/outport/addOutport",data.field,function(res){
-                if(res.code==200){
-                    tableIns.reload();
-                }
-                layer.msg(res.errorMsg);
-                layer.close(mainIndex);
-            })
-            return false;
-        });
+            LODOP.ADD_PRINT_TEXT(58,413,150,20,"入库日期：");
+            LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+            LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+            LODOP.ADD_PRINT_TEXT(58,562,303,20,data.entryDate);
+            LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+            LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+
+            LODOP.ADD_PRINT_TEXT(91,45,120,20,"订单号：");
+            LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+            LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+            LODOP.ADD_PRINT_TEXT(91,164,250,20,data.orderId);
+            LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+            LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+
+            LODOP.ADD_PRINT_TEXT(91,413,150,25,"发票类行：普通发票");
+            LODOP.SET_PRINT_STYLEA(0,"FontSize",8);
+            LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+            LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+            LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+
+            //产品表头
+            LODOP.ADD_PRINT_TEXT(156,45,120,20,"序号");
+            LODOP.SET_PRINT_STYLEA(0,"FontSize",11);
+            LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+            LODOP.SET_PRINT_STYLEA(0,"Bold",1);
+            LODOP.ADD_PRINT_TEXT(156,164,130,20,"机型");
+            LODOP.SET_PRINT_STYLEA(0,"FontSize",11);
+            LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+            LODOP.SET_PRINT_STYLEA(0,"Bold",1);
+            LODOP.ADD_PRINT_TEXT(156,293,121,20,"颜色");
+            LODOP.SET_PRINT_STYLEA(0,"FontSize",11);
+            LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+            LODOP.SET_PRINT_STYLEA(0,"Bold",1);
+            LODOP.ADD_PRINT_TEXT(156,413,70,20,"配置");
+            LODOP.SET_PRINT_STYLEA(0,"FontSize",11);
+            LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+            LODOP.SET_PRINT_STYLEA(0,"Bold",1);
+            LODOP.ADD_PRINT_TEXT(156,482,81,20,"单价");
+            LODOP.SET_PRINT_STYLEA(0,"FontSize",11);
+            LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+            LODOP.SET_PRINT_STYLEA(0,"Bold",1);
+            LODOP.ADD_PRINT_TEXT(156,562,120,20,"数量");
+            LODOP.SET_PRINT_STYLEA(0,"FontSize",11);
+            LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+            LODOP.SET_PRINT_STYLEA(0,"Bold",1);
+            LODOP.ADD_PRINT_TEXT(156,681,184,20,"备注");
+            LODOP.SET_PRINT_STYLEA(0,"FontSize",11);
+            LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+            LODOP.SET_PRINT_STYLEA(0,"Bold",1);
+
+            //产品值 --> 横向
+
+
+                LODOP.ADD_PRINT_TEXT(x+rowMoveDown+(rowHeight * i),45,120,55,(i + 1));
+                LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+                LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+                LODOP.ADD_PRINT_TEXT(x+rowMoveDown+(rowHeight * i),164,130,55,data.computerType);
+                LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+                LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+                LODOP.ADD_PRINT_TEXT(x+rowMoveDown+(rowHeight * i),293,120,55,data.colour);
+                LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+                LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+                LODOP.ADD_PRINT_TEXT(x+rowMoveDown+(rowHeight * i),413,70,55,data.config);
+                LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+                LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+                LODOP.ADD_PRINT_TEXT(x+rowMoveDown+(rowHeight * i),482,100,55,data.price);
+                LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+                LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+                LODOP.ADD_PRINT_TEXT(x+rowMoveDown+(rowHeight * i),562,120,55,data.number);
+                LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+                LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+                LODOP.ADD_PRINT_TEXT(x+rowMoveDown+(rowHeight * i),681,184,55,data.remark);
+                LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+                LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+
+                LODOP.ADD_PRINT_RECT(x+lineMoveDown+(lineHeight * i),45,120,30,0,1);
+                LODOP.ADD_PRINT_RECT(x+lineMoveDown+(lineHeight * i),164,130,30,0,1);
+                LODOP.ADD_PRINT_RECT(x+lineMoveDown+(lineHeight * i),293,121,30,0,1);
+                LODOP.ADD_PRINT_RECT(x+lineMoveDown+(lineHeight * i),413,70,30,0,1);
+                LODOP.ADD_PRINT_RECT(x+lineMoveDown+(lineHeight * i),482,81,30,0,1);
+                LODOP.ADD_PRINT_RECT(x+lineMoveDown+(lineHeight * i),562,120,30,0,1);
+                LODOP.ADD_PRINT_RECT(x+lineMoveDown+(lineHeight * i),681,184,30,0,1);
+                //合计行，判断是否显示
+                LODOP.ADD_PRINT_TEXT(x+rowMoveDown+(rowHeight * 2),45,369,20,"合计：");
+                LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+                LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+                LODOP.ADD_PRINT_TEXT(x+rowMoveDown+(rowHeight * 2),413,70,20,data.salenumber);
+                LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+                LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+                LODOP.ADD_PRINT_TEXT(x+rowMoveDown+(rowHeight * 2),482,81,20,data.salenumber*data.price);
+                LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+                LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+
+                LODOP.ADD_PRINT_RECT(x+lineMoveDown+(lineHeight * 2),45,369,30,0,1);
+                LODOP.ADD_PRINT_RECT(x+lineMoveDown+(lineHeight * 2),413,70,30,0,1);
+                LODOP.ADD_PRINT_RECT(x+lineMoveDown+(lineHeight * 2),482,81,30,0,1);
+                LODOP.ADD_PRINT_RECT(x+lineMoveDown+(lineHeight * 2),562,120,30,0,1);
+                LODOP.ADD_PRINT_RECT(x+lineMoveDown+(lineHeight * 2),681,184,30,0,1);
+
+
+
+
+            LODOP.ADD_PRINT_TEXT(x+rowMoveDown+(rowHeight * 2),563,120,20,"入库确认签字：");
+            LODOP.SET_PRINT_STYLEA(0,"FontSize",10);
+            LODOP.SET_PRINT_STYLEA(0,"Alignment",2);
+
+            //外框
+            LODOP.ADD_PRINT_RECT(0,0,911,352,0,1);
+            LODOP.ADD_PRINT_RECT(0,45,820,322,0,1);
+
+            LODOP.ADD_PRINT_RECT(10,45,820,1,0,2);
+
+            LODOP.ADD_PRINT_RECT(45,45,820,1,0,1);
+            LODOP.ADD_PRINT_RECT(45,45,120,35,0,1);
+            LODOP.ADD_PRINT_RECT(45,164,250,35,0,1);
+            LODOP.ADD_PRINT_RECT(45,413,150,35,0,1);
+            LODOP.ADD_PRINT_RECT(45,562,303,35,0,1);
+
+            LODOP.ADD_PRINT_RECT(79,45,120,35,0,1);
+            LODOP.ADD_PRINT_RECT(79,164,250,35,0,1);
+            LODOP.ADD_PRINT_RECT(79,413,150,35,0,1);
+            LODOP.ADD_PRINT_RECT(79,562,303,35,0,1);
+
+            LODOP.ADD_PRINT_RECT(113,45,120,35,0,1);
+            LODOP.ADD_PRINT_RECT(113,164,250,35,0,1);
+            LODOP.ADD_PRINT_RECT(113,413,150,35,0,1);
+            LODOP.ADD_PRINT_RECT(113,562,303,35,0,1);
+
+            LODOP.ADD_PRINT_RECT(147,45,120,30,0,1);
+            LODOP.ADD_PRINT_RECT(147,164,130,30,0,1);
+            LODOP.ADD_PRINT_RECT(147,293,121,30,0,1);
+            LODOP.ADD_PRINT_RECT(147,413,70,30,0,1);
+            LODOP.ADD_PRINT_RECT(147,482,81,30,0,1);
+            LODOP.ADD_PRINT_RECT(147,562,120,30,0,1);
+            LODOP.ADD_PRINT_RECT(147,681,184,30,0,1);
+
+            LODOP.PRINT_DESIGN();
+            //LODOP.PREVIEW();
+            //LODOP.PRINT();
+        };
+
+
+
+
+
+
     });
 </script>
 

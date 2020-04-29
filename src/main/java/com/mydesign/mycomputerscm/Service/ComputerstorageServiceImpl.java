@@ -43,7 +43,8 @@ public class ComputerstorageServiceImpl extends ServiceImpl<ComputerStorageMappe
         BeanUtils.copyProperties(inportVo,stoComstock);
         BeanUtils.copyProperties(inportVo,suptradedetail);
         suptradedetail.setTradetype("入库");
-
+//加入明细表
+        busSuptradedetailMapper.insert(suptradedetail);
         computerStorageMapper.insert(computerStorage);
         for (String i:
         imeis) {
@@ -54,8 +55,7 @@ public class ComputerstorageServiceImpl extends ServiceImpl<ComputerStorageMappe
                iMEIMapper.insert(imei);
                //加入//库存表
                stoComstockMapper.insert(stoComstock);
-               //加入明细表
-               busSuptradedetailMapper.insert(suptradedetail);
+
            }
         }
 
@@ -80,8 +80,6 @@ public class ComputerstorageServiceImpl extends ServiceImpl<ComputerStorageMappe
         computerStorageMapper.updateById(computerStorage);
         String[] imeis = inportVo.getImeis();
         suptradedetail.setTradetype("入库");
-
-
 
 
         LambdaQueryWrapper<IMEI> Wrapper = new LambdaQueryWrapper<>();
